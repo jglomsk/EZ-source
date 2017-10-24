@@ -25,7 +25,7 @@ Out of order formula setting to variables is not supported in this version of EZ
 
 ## Compiling
 
-In order to create an use your program, you're going to need:
+In order to create and use your program, you're going to need (for alternative, go to line 47):
 1: The interpreter that you should have downloaded.
     A: For Windows users: ez.exe
     B: For Mac/Linux users: ez.out
@@ -44,3 +44,7 @@ Replace interpreter_path with the full path to the interpreter (see Compiling: 3
 Replace ez_file_path with the full path to your .ez file (see Compiling: 4A).
 Boom! You just programmed in EZ!
 Have lots of fun!
+Alternative compiling method:
+1: Click your ez file.
+2: Drag it to your interpreter. On Windows it is ez.exe but on Mac/Linux it is ez.out.
+3: Watch your code run.

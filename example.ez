@@ -1,1 +1,3 @@
-show 12 + 22
+show 12 + 24
+set x to 33
+show x
