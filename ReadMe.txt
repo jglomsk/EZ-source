@@ -19,6 +19,10 @@ The word set will set a variable to whatever comes after the word to (e.g. set x
 If you set a variable, you can then show it's value with show and then the variable name (e.g. show x).
 If you want to set a variable to a formula, you can! Just do set var_name to formula (where var_name is the name of the variable and formula could be something like 42 + 90).
 If you want to show a variable that was set to a formula, just show it!
+Comments can be done with a simple semicolon (;).
+Functions are supported in this version and can be made with a certain syntax (make func_name do stuff stuff stuff done).
+The keyword make is used to begin a function. The keyword do starts the function. The keyword done ends it.
+The keyword call allows you to call the function you made (e.g. make the function do whatever is inside).
 Showing a variable inside of a formula is not supported in this version of EZ (e.g. show x + 2).
 Out of order formulas are not supported in this version of EZ (e.g. 2*3^5 is not supported, but (2*3)^5 and 2*(3^5) are supported).
 Out of order formula setting to variables is not supported in this version of EZ.

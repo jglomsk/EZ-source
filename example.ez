@@ -1,3 +1,14 @@
-show 12 + 24
-set x to 33
-show x
+set global to 82 ; global = 82
+show global      ; shows 82
+make my_func do  ; makes my_func a function
+show global      ; shows 82 (global version)
+show 90 + 34     ; shows 124
+set global to 73 ; sets a local value to the global variable
+set local to 92  ; local = 92
+show global      ; shows the local value of global variable,
+                 ; but shows the global value if no local value is set
+show local       ; shows 92
+done             ; finishes my_func
+call my_func     ; does everything inside of my_func
+show global      ; shows 82, as that is the global value
+show local       ; shows the word local, as local is inside a function
