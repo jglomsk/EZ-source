@@ -12,3 +12,9 @@ done             ; finishes my_func
 call my_func     ; does everything inside of my_func
 show global      ; shows 82, as that is the global value
 show local       ; shows the word local, as local is inside a function
+if 83 > global   ; if statement means if it's true it executes the inside code
+show this works! ; executes this if the statement evaluates to true
+done             ; end the if statement
+else             ; only executes when the if statement fails
+show food broke  ; lol meme is funny
+done             ; finish the else statement

@@ -23,6 +23,8 @@ Comments can be done with a simple semicolon (;).
 Functions are supported in this version and can be made with a certain syntax (make func_name do stuff stuff stuff done).
 The keyword make is used to begin a function. The keyword do starts the function. The keyword done ends it.
 The keyword call allows you to call the function you made (e.g. make the function do whatever is inside).
+The keyword if is a conditional statement. If your conditional is true, everything inside will execute.
+The keyword else will execute if your conditional is false.
 Showing a variable inside of a formula is not supported in this version of EZ (e.g. show x + 2).
 Out of order formulas are not supported in this version of EZ (e.g. 2*3^5 is not supported, but (2*3)^5 and 2*(3^5) are supported).
 Out of order formula setting to variables is not supported in this version of EZ.
