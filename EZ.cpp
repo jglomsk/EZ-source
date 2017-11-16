@@ -5,8 +5,9 @@ int main(int argc, char** argv)
 		std::cout << "Usage: " << argv[0] << " <full_path_to_file>" << std::endl;
 		endp(1);
 	} else {
-		translate(argv[1]);
-		end_n_del(funcs);
+		Main x;
+		x.translate(argv[1]);
+		x.end_n_del(x.funcs);
 		endp(0);
 	}
 }
