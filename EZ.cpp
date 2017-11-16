@@ -8,6 +8,6 @@ int main(int argc, char** argv)
 		Main x;
 		x.translate(argv[1]);
 		x.end_n_del(x.funcs);
-		endp(0);
+		endp(0, x.flush);
 	}
 }

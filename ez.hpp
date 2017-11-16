@@ -20,14 +20,18 @@ class Main {
 public:
 	std::vector<std::string> funcs; // need this for function keeping and file deleting at the end
 	bool tof;
+	int flush;
 	void end_n_del(std::vector<std::string> vals);
 	float pemdas(std::string thing);
 	void translate(const char* file, // the file itself
 							 	std::vector<std::string> vars = std::vector<std::string>(20), // the variables that are global
 							 	std::vector<std::string> vals = std::vector<std::string>(20), // the values to those variables
 							 	int co = 0, int wya = 0, bool in_func = false);
-	void while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables, std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this, std::vector<std::string> entire_file, std::string thing);
+	void while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables,
+								std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this,
+								std::vector<std::string> entire_file, std::string thing);
 };
+// does the while loop keyword
 void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables, std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this, std::vector<std::string> entire_file, std::string thing)
 {
 	std::ofstream do_me_hard;
@@ -57,6 +61,10 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 				if (beg > end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i);
 				break;
 			}
+			else if (im_this == "var2") { // 8 < x
+				beg--;
+				if (beg > end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i);
+			}
 		}
 	}
 	else if (beg < end) while (beg < end) {
@@ -68,6 +76,7 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg++;
+				if (beg < end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i);
 			}
 		}
 	}
@@ -579,7 +588,7 @@ void Main::translate(const char* file, // the file itself
 			}
 		}
 		// keyword while
-		else if (entire_file[i].find("while") != std::string::npos) {
+		else if (entire_file[i].find("while") != std::string::npos && entire_file[i].find("while") < comment_limit) {
 			int k = entire_file[i].find("while") + 5;
 			std::string thing = "";
 			int beg = 0;
@@ -772,13 +781,24 @@ void Main::translate(const char* file, // the file itself
 					for (int p = 0;; p++) {
 						if (entire_file[i][k] == variables[p][0]) {
 							std::string thing = "";
+							bool not_done = false;
+							int here = 0;
 							for (int e = k; e < stop_here && entire_file[i][e] != ' '; e++) {
 								thing += entire_file[i][e];
+								here = e;
 							}
-							if (thing == variables[p]) {
+							if (entire_file[i].find_first_of("1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) < stop_here &&
+							entire_file[i].find_first_of("1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) != std::string::npos) not_done = true;
+							if (thing == variables[p] && !not_done) {
 								std::cout << values[p];
 								std::cout << '\n';
 								break;
+							}
+							else {
+								for (int b = k; b < stop_here; b++) {
+									std::cout << entire_file[i][b];
+								}
+								std::cout << '\n';
 							}
 						}
 						else if (p < count - 1) {}
@@ -831,9 +851,14 @@ void Main::translate(const char* file, // the file itself
 						else {
 							if (copy_k < stop_here) {
 								values[j] = "";
-								while (copy_k < stop_here) {
+								while (copy_k < stop_here && entire_file[i][copy_k] != ' ') {
 									values[j] += (entire_file[i].at(copy_k));
 									copy_k++;
+								}
+								if (values[j] == "input") {
+									values[j] = "";
+									std::cin >> values[j];
+									flush++;
 								}
 							} else throw 5709;
 						}
@@ -850,9 +875,14 @@ void Main::translate(const char* file, // the file itself
 						}
 						else {
 							if (copy_k < stop_here) {
-								while (copy_k < stop_here) {
+								while (copy_k < stop_here && entire_file[i][copy_k] != ' ') {
 									values[count] += (entire_file[i].at(copy_k));
 									copy_k++;
+								}
+								if (values[count] == "input") {
+									values[count] = "";
+									std::cin >> values[count];
+									flush++;
 								}
 							} else throw 537;
 						}

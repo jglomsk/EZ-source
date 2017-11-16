@@ -448,10 +448,11 @@ void nullify(T& to_null)
 	to_null = 0;
 }
 // ends a program
-int endp(int val)
+int endp(int val, int flush = 0)
 {
 	std::cout << "Press enter to continue...";
-	std::cin.sync();
+	std::cin.clear();
+	if (flush) std::cin.get();
 	std::cin.ignore();
 	exit(val);
 	return (val);

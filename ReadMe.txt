@@ -1,8 +1,8 @@
 ## Index:
 
 Intro.........................Line 7
-Keywords......................Line 14
-Compiling.....................Line 25
+Keywords......................Line 15
+Compiling.....................Line 35
 
 ## Introduction
 
@@ -23,15 +23,19 @@ Comments can be done with a simple semicolon (;).
 Functions are supported in this version and can be made with a certain syntax (make func_name do stuff stuff stuff done).
 The keyword make is used to begin a function. The keyword do starts the function. The keyword done ends it.
 The keyword call allows you to call the function you made (e.g. make the function do whatever is inside).
-The keyword if is a conditional statement. If your conditional is true, everything inside will execute.
-The keyword else will execute if your conditional is false.
+The keyword if is a conditional statement. If your conditional is true, everything inside will execute. The keyword done ends the statement.
+The keyword else will execute if your conditional is false. The keyword done ends the statement.
+The keyword while will execute whatever is inside while your conditional is true.
+Don't worry about incrementing or decrementing, we already took care of that for you.
+The keyword done means you're ready for your loop to be done and do it's thing.
+The keyword input inside a setting of a variable means you take input and set it to that variable (e.g. set x to input).
 Showing a variable inside of a formula is not supported in this version of EZ (e.g. show x + 2).
 Out of order formulas are not supported in this version of EZ (e.g. 2*3^5 is not supported, but (2*3)^5 and 2*(3^5) are supported).
 Out of order formula setting to variables is not supported in this version of EZ.
 
 ## Compiling
 
-In order to create and use your program, you're going to need (for alternative, go to line 47):
+In order to create and use your program, you're going to need (for alternative, go to line 57):
 1: The interpreter that you should have downloaded.
     A: For Windows users: ez.exe
     B: For Mac/Linux users: ez.out
@@ -41,6 +45,7 @@ In order to create and use your program, you're going to need (for alternative, 
 3: The full path to the ez interpreter.
     A: On Windows it should look like the following, but with your_name replaced with your username: C:\Users\your_name\Downloads\ez.exe
     B: On Mac/Linux it should look like: ~/Downloads/ez.out
+			I. NOTE: On Mac/Linux, simply put a dot (.) in front of your interpreter path. (e.g. ./Downloads/ez.out <ez_file_path>).
 4: A file with the .ez extension (e.g. main.ez).
     A: You'll also need the full path to said .ez file.
         I. You should also know that to edit the .ez file you simply right click the file, click open with, and click your favorite text editor (e.g. Notepad).
