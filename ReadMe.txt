@@ -2,7 +2,8 @@
 
 Intro.........................Line 7
 Keywords......................Line 15
-Compiling.....................Line 35
+Compiling.....................Line 37
+Known Bugs....................Line 64
 
 ## Introduction
 
@@ -59,3 +60,7 @@ Alternative compiling method:
 1: Click your ez file.
 2: Drag it to your interpreter. On Windows it is ez.exe but on Mac/Linux it is ez.out.
 3: Watch your code run.
+
+## Known Bugs
+
+You cannot make a statement that ends with done inside another statement like it (e.g. if x > 82 while x > 82).

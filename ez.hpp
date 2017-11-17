@@ -26,18 +26,27 @@ public:
 	void translate(const char* file, // the file itself
 							 	std::vector<std::string> vars = std::vector<std::string>(20), // the variables that are global
 							 	std::vector<std::string> vals = std::vector<std::string>(20), // the values to those variables
-							 	int co = 0, int wya = 0, bool in_func = false);
+							 	int co = 0, int wya = 0, bool in_func = false, int nested = 0);
 	void while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables,
 								std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this,
-								std::vector<std::string> entire_file, std::string thing);
+								std::vector<std::string> entire_file, std::string thing, int comment_limit = 0);
 };
 // does the while loop keyword
-void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables, std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this, std::vector<std::string> entire_file, std::string thing)
+void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables, std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this, std::vector<std::string> entire_file, std::string thing, int comment_limit)
 {
+	int nest = 0;
 	std::ofstream do_me_hard;
 	do_me_hard.open("conditional" + std::to_string(problem));
 	for (int j = k + 1;; j++) {
-		if (entire_file[i].find("done") != std::string::npos) break;
+		if ((entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
+						(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
+						(entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
+						(entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
+		else if (entire_file[i].find("done") != std::string::npos && nest > 0) {
+			nest--;
+			do_me_hard << "done\n";
+		}
+		else if (entire_file[i].find("done") != std::string::npos) break;
 		else if (i == newlinesnum) {
       std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
       std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
@@ -411,13 +420,14 @@ float Main::pemdas(std::string thing)
 void Main::translate(const char* file, // the file itself
 							 std::vector<std::string> vars, // the variables that are global
 							 std::vector<std::string> vals, // the values to those variables
-							 int co, int wya, bool in_func) // co = count of variables, wya = where is the program
+							 int co, int wya, bool in_func, int nested) // co = count of variables, wya = where is the program
 {
 	std::ifstream fp(file);
 	std::vector<std::string> entire_file;
 	int count = co;
 	int newlinesnum = 0;
 	int problem = 0;
+	int nest = nested;
 	// reading in file into entire_file
 	while (!fp.eof()) {
 		std::string curr = "";
@@ -443,8 +453,26 @@ void Main::translate(const char* file, // the file itself
 		int comment_limit = 0;
 		if (entire_file[i].find(';') != std::string::npos) comment_limit = entire_file[i].find(';');
 		else comment_limit = entire_file[i].size();
+		// keyword with
+		if (entire_file[i].find("with") != std::string::npos && entire_file[i].find("with") < comment_limit) {
+			int k = entire_file[i].find("with") + 4;
+			while (entire_file[i][k] == ' ') k++;
+			std::string fp_add = "";
+			for (; k < comment_limit && entire_file[i][k] != ' '; k++) {
+				fp_add += entire_file[i][k];
+			}
+			try {
+				std::ifstream fp_test(fp_add.c_str());
+				if (fp_test) translate(fp_add.c_str(), variables, values, count, i, false);
+				else throw 107;
+			} catch (...) {
+				std::cout << "Import Error.\nCheck your import file and make sure you typed the correct file name.\n";
+				end_n_del(funcs);
+				endp(107);
+			}
+		}
 		// keyword if
-		if (entire_file[i].find("if") != std::string::npos && entire_file[i].find("if") < comment_limit) {
+		else if (entire_file[i].find("if") != std::string::npos && entire_file[i].find("if") < comment_limit) {
 			int k = entire_file[i].find("if") + 2;
 			while (entire_file[i][k] == ' ') k++;
 			std::string condition1 = "";
@@ -542,12 +570,20 @@ void Main::translate(const char* file, // the file itself
           		j = 0;
           		do_me_hard << '\n';
         		}
-        		else if (entire_file[i].find("done") != std::string::npos) break;
+						else if ((entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
+										 (entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
+										 (entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
+										 (entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
+						else if (entire_file[i].find("done") != std::string::npos && nest > 0) {
+							nest--;
+							do_me_hard << "done\n";
+						}
+						else if (entire_file[i].find("done") != std::string::npos && nest == 0 && entire_file[i].find("done") < comment_limit) break;
 						char put_me_in_coach = entire_file[i][j - 1];
         		do_me_hard << put_me_in_coach;
 					}
 					do_me_hard.close();
-					translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i);
+					translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i, false, nest);
 					remove(std::string("conditional" + std::to_string(problem)).c_str());
 				}
 				else {
@@ -575,6 +611,14 @@ void Main::translate(const char* file, // the file itself
 						j = 0;
 						else_file << '\n';
 					}
+					else if ((entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
+					  			(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
+									(entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
+									(entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
+					else if (entire_file[i].find("done") != std::string::npos && nest > 0) {
+						nest--;
+						else_file << "done\n";
+					}
 					else if (entire_file[i].find("done") != std::string::npos) break;
 					char put_me_in_coach = entire_file[i][j - 1];
 					else_file << put_me_in_coach;
@@ -596,7 +640,7 @@ void Main::translate(const char* file, // the file itself
 			while (entire_file[i][k] == ' ') k++;
 			std::string condition1 = "";
 			std::string im_this = "";
-			for (; entire_file[i][k] != ' '; k++) {
+			for (; entire_file[i][k] != ' ' && k < comment_limit; k++) {
 				condition1 += entire_file[i][k];
 			}
 			while (entire_file[i][k] == ' ') k++;
@@ -690,7 +734,7 @@ void Main::translate(const char* file, // the file itself
 				}
 			}
 			if (tof) {
-				while_loop_guts(beg, end, newlinesnum, variables, values, k, i, count, problem, im_this, entire_file, thing);
+				while_loop_guts(beg, end, newlinesnum, variables, values, k, i, count, problem, im_this, entire_file, thing, comment_limit);
 				remove(std::string("conditional" + std::to_string(problem)).c_str());
 			}
 		}
@@ -726,6 +770,14 @@ void Main::translate(const char* file, // the file itself
 					i++;
 					j = 0;
 					func_file << '\n';
+				}
+				else if ((entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
+								(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
+								(entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
+								(entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
+				else if (entire_file[i].find("done") != std::string::npos && nest > 0) {
+					nest--;
+					func_file << "done\n";
 				}
 				else if (entire_file[i].find("done") != std::string::npos) break;
 				char put_me_in_coach = entire_file[i][j - 1];
