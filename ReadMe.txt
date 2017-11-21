@@ -38,18 +38,18 @@ Out of order formula setting to variables is not supported in this version of EZ
 
 In order to create and use your program, you're going to need (for alternative, go to line 57):
 1: The interpreter that you should have downloaded.
-    A: For Windows users: ez.exe
-    B: For Mac/Linux users: ez.out
+	A: For Windows users: ez.exe
+	B: For Mac/Linux users: ez.out
 2: A command window.
-    A: For Windows users: a command prompt window.
-    B: For Mac/Linux users: a terminal window.
+	A: For Windows users: a command prompt window.
+	B: For Mac/Linux users: a terminal window.
 3: The full path to the ez interpreter.
-    A: On Windows it should look like the following, but with your_name replaced with your username: C:\Users\your_name\Downloads\ez.exe
-    B: On Mac/Linux it should look like: ~/Downloads/ez.out
-			I. NOTE: On Mac/Linux, simply put a dot (.) in front of your interpreter path. (e.g. ./Downloads/ez.out <ez_file_path>).
+	A: On Windows it should look like the following, but with your_name replaced with your username: C:\Users\your_name\Downloads\ez.exe
+	B: On Mac/Linux it should look like: ~/Downloads/ez.out
+		I. NOTE: On Mac/Linux, simply put a dot (.) in front of your interpreter path. (e.g. ./Downloads/ez.out <ez_file_path>).
 4: A file with the .ez extension (e.g. main.ez).
-    A: You'll also need the full path to said .ez file.
-        I. You should also know that to edit the .ez file you simply right click the file, click open with, and click your favorite text editor (e.g. Notepad).
+	A: You'll also need the full path to said .ez file.
+		I. You should also know that to edit the .ez file you simply right click the file, click open with, and click your favorite text editor (e.g. Notepad).
 Now for the actual compiling.
 Simply type the following into your command window: <interpreter_path> <ez_file_path>
 Replace interpreter_path with the full path to the interpreter (see Compiling: 3AB).
@@ -63,4 +63,4 @@ Alternative compiling method:
 
 ## Known Bugs
 
-You cannot make a statement that ends with done inside another statement like it (e.g. if x > 82 while x > 82).
+1. You may have to change the permissions on the interpreter file. An ez fix is to right click your interpreter file, click properties, and make sure you can execute it as a program.

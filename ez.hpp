@@ -15,7 +15,6 @@
 #include <vector>
 #include <string>
 #include <cctype>
-#include "mere.hpp"
 class Main {
 public:
 	std::vector<std::string> funcs; // need this for function keeping and file deleting at the end
@@ -23,6 +22,7 @@ public:
 	int flush;
 	void end_n_del(std::vector<std::string> vals);
 	float pemdas(std::string thing);
+	float calc(float x, char sign, float y);
 	void translate(const char* file, // the file itself
 							 	std::vector<std::string> vars = std::vector<std::string>(20), // the variables that are global
 							 	std::vector<std::string> vals = std::vector<std::string>(20), // the values to those variables
@@ -31,6 +31,31 @@ public:
 								std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this,
 								std::vector<std::string> entire_file, std::string thing, int comment_limit = 0);
 };
+// ends a program
+int endp(int val, int flush = 0)
+{
+	std::cout << "Press enter to continue...";
+	std::cin.clear();
+	if (flush) std::cin.get();
+	std::cin.ignore();
+	exit(val);
+	return (val);
+}
+// is a calculator
+float Main::calc(float x, char sign, float y)
+{
+	if (sign == '*') return x * y;
+	else if (sign == '/') return x / y;
+	else if (sign == '+') return x + y;
+	else if (sign == '-') return x - y;
+	else if (sign == '^') {
+		if (y == 0) return 1.0;
+		float a = x;
+		for (int i = 1; i < (int)y; i++) x *= a;
+		return x;
+	}
+	else return 0.0;
+}
 // does the while loop keyword
 void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables, std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this, std::vector<std::string> entire_file, std::string thing, int comment_limit)
 {
@@ -48,19 +73,19 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 		}
 		else if (entire_file[i].find("done") != std::string::npos) break;
 		else if (i == newlinesnum) {
-      std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
-      std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
-      std::cout << "Error code: 60n3\n";
-      end_n_del(funcs);
-    	endp(603);
+			std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
+			std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
+			std::cout << "Error code: 60n3\n";
+			end_n_del(funcs);
+			endp(603);
 		}
 		else if (j > entire_file[i].size()) {
-      i++;
-      j = 0;
-    	do_me_hard << '\n';
-    }
+			i++;
+			j = 0;
+			do_me_hard << '\n';
+		}
 		char put_me_in_coach = entire_file[i][j - 1];
-  	do_me_hard << put_me_in_coach;
+		do_me_hard << put_me_in_coach;
 	}
 	do_me_hard.close();
 	if (beg > end) while (beg > end) {
@@ -373,10 +398,10 @@ float Main::pemdas(std::string thing)
 			wo_comments[i] == '/' ||
 			wo_comments[i] == '-') {
 			if (curr_ans && y != "") {
-				curr_ans = Math::calc(curr_ans, sign, ::atof(y.c_str()));
+				curr_ans = calc(curr_ans, sign, ::atof(y.c_str()));
 			}
 			else if (x != "" && y != "" && sign != '\0') {
-				curr_ans = Math::calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
+				curr_ans = calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
 			}
 			sign = wo_comments[i];
 			now_switch = true;
@@ -384,7 +409,7 @@ float Main::pemdas(std::string thing)
 		}
 		else if (now_switch && (isdigit(wo_comments[i]) || wo_comments[i] == '.')) {
 			if (wo_comments[i] == '\0') {
-				curr_ans = Math::calc(curr_ans, sign, ::atof(y.c_str()));
+				curr_ans = calc(curr_ans, sign, ::atof(y.c_str()));
 				break;
 			}
 			else {
@@ -395,7 +420,7 @@ float Main::pemdas(std::string thing)
 			in_parens = true;
 		}
 		else if (wo_comments[i] == ')' && in_parens) {
-			curr_ans = Math::calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
+			curr_ans = calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
 			x = "";
 			y = "";
 			in_parens = false;
@@ -403,13 +428,13 @@ float Main::pemdas(std::string thing)
 		}
 		else if (wo_comments[i] == '\0' && curr_ans) {
 			if (y != "") {
-				curr_ans = Math::calc(curr_ans, sign, ::atof(y.c_str()));
+				curr_ans = calc(curr_ans, sign, ::atof(y.c_str()));
 			}
 			break;
 		}
 		else if (wo_comments[i] == '\0') {
 			if (curr_ans == 0) {
-				curr_ans = Math::calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
+				curr_ans = calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
 			}
 			break;
 		}
@@ -448,7 +473,7 @@ void Main::translate(const char* file, // the file itself
 	}
 	// begin big loop
 	for (int i = 0; i < newlinesnum; i++) {
-		if (in_func) problem = Math::abs(wya - (newlinesnum - i));
+		if (in_func) problem = abs(wya - (newlinesnum - i));
 		else problem = i + 1;
 		int comment_limit = 0;
 		if (entire_file[i].find(';') != std::string::npos) comment_limit = entire_file[i].find(';');
@@ -485,8 +510,8 @@ void Main::translate(const char* file, // the file itself
 			k++;
 			while (entire_file[i][k] == ' ') k++;
 			for (; entire_file[i][k] != '\0' && entire_file[i][k] != ' ' && k < comment_limit; k++) {
-     		condition2 += entire_file[i][k];
-      }
+				condition2 += entire_file[i][k];
+			}
 			if (cond_sign == '>' ||
 					cond_sign == '<' ||
 					cond_sign == '=') {
@@ -514,27 +539,27 @@ void Main::translate(const char* file, // the file itself
 					}
 					else {
 						if (cond_sign == '>') tof = (std::atoi(values[a].c_str()) > std::atoi(values[b].c_str()));
-            else if (cond_sign == '<') tof = (std::atoi(values[a].c_str()) < std::atoi(values[b].c_str()));
-            else if (cond_sign == '=') tof = (atof(values[a].c_str()) == atof(values[b].c_str()));
+						else if (cond_sign == '<') tof = (std::atoi(values[a].c_str()) < std::atoi(values[b].c_str()));
+						else if (cond_sign == '=') tof = (atof(values[a].c_str()) == atof(values[b].c_str()));
 					}
 				}
 				else if (isdigit(condition2.c_str()[0])) {
-          int j = 0;
-          while (j < variables.size()) {
-            if (variables[j] == condition1) break;
-            else j++;
-          }
-          if (j > variables.size()) {
-            std::cout << "You failed to specify a valid variable for the first half of the conditional on line " << problem << ".\n";
-            std::cout << "The program will now exit.\nError code: 14rg\n";
-            end_n_del(funcs);
-            endp(14);
-          }
-          else {
-            if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) > std::atoi(condition2.c_str()));
-            else if (cond_sign == '<') tof = (std::atoi(values[j].c_str()) < std::atoi(condition2.c_str()));
-            else if (cond_sign == '=') tof = (std::atoi(values[j].c_str()) == std::atoi(condition2.c_str()));
-        	}
+					int j = 0;
+ 					while (j < variables.size()) {
+						if (variables[j] == condition1) break;
+						else j++;
+					}
+					if (j > variables.size()) {
+						std::cout << "You failed to specify a valid variable for the first half of the conditional on line " << problem << ".\n";
+						std::cout << "The program will now exit.\nError code: 14rg\n";
+						end_n_del(funcs);
+						endp(14);
+					}
+					else {
+						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) > std::atoi(condition2.c_str()));
+						else if (cond_sign == '<') tof = (std::atoi(values[j].c_str()) < std::atoi(condition2.c_str()));
+						else if (cond_sign == '=') tof = (std::atoi(values[j].c_str()) == std::atoi(condition2.c_str()));
+					}
 				}
 				else if (isdigit(condition1[0])) {
 					int j = 0;
@@ -559,17 +584,17 @@ void Main::translate(const char* file, // the file itself
 					do_me_hard.open("conditional" + std::to_string(problem));
 					for (int j = k + 1;; j++) {
 						if (i == newlinesnum) {
-         			std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
-         			std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
-         			std::cout << "Error code: 60n3\n";
-         			end_n_del(funcs);
-         			endp(603);
-					 	}
+							std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
+							std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
+							std::cout << "Error code: 60n3\n";
+							end_n_del(funcs);
+							endp(603);
+						}
 						else if (j > entire_file[i].size()) {
-          		i++;
-          		j = 0;
-          		do_me_hard << '\n';
-        		}
+							i++;
+							j = 0;
+							do_me_hard << '\n';
+						}
 						else if ((entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
 										 (entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
 										 (entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
@@ -580,7 +605,7 @@ void Main::translate(const char* file, // the file itself
 						}
 						else if (entire_file[i].find("done") != std::string::npos && nest == 0 && entire_file[i].find("done") < comment_limit) break;
 						char put_me_in_coach = entire_file[i][j - 1];
-        		do_me_hard << put_me_in_coach;
+						do_me_hard << put_me_in_coach;
 					}
 					do_me_hard.close();
 					translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i, false, nest);
@@ -612,7 +637,7 @@ void Main::translate(const char* file, // the file itself
 						else_file << '\n';
 					}
 					else if ((entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
-					  			(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
+									(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
 									(entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
 									(entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
 					else if (entire_file[i].find("done") != std::string::npos && nest > 0) {
@@ -649,8 +674,8 @@ void Main::translate(const char* file, // the file itself
 			k++;
 			while (entire_file[i][k] == ' ') k++;
 			for (; entire_file[i][k] != '\0' && entire_file[i][k] != ' ' && k < comment_limit; k++) {
-     		condition2 += entire_file[i][k];
-      }
+				condition2 += entire_file[i][k];
+			}
 			if (cond_sign == '>' ||
 					cond_sign == '<' ||
 					cond_sign == '=') {
@@ -681,29 +706,29 @@ void Main::translate(const char* file, // the file itself
 					}
 					else {
 						if (cond_sign == '>') tof = (std::atoi(values[a].c_str()) > std::atoi(values[b].c_str()));
-            else if (cond_sign == '<') tof = (std::atoi(values[a].c_str()) < std::atoi(values[b].c_str()));
-            else if (cond_sign == '=') tof = (std::atoi(values[a].c_str()) == std::atoi(values[b].c_str()));
+						else if (cond_sign == '<') tof = (std::atoi(values[a].c_str()) < std::atoi(values[b].c_str()));
+						else if (cond_sign == '=') tof = (std::atoi(values[a].c_str()) == std::atoi(values[b].c_str()));
 						beg = std::atoi(values[a].c_str());
 						end = std::atoi(values[b].c_str());
 						im_this = "2var";
 					}
 				}
 				else if (isdigit(condition2.c_str()[0])) {
-          int j = 0;
-          while (j < variables.size()) {
-            if (variables[j] == condition1) break;
-            else j++;
-          }
-          if (j > variables.size()) {
-            std::cout << "You failed to specify a valid variable for the first half of the conditional on line " << problem << ".\n";
-            std::cout << "The program will now exit.\nError code: 14rg\n";
-            end_n_del(funcs);
-            endp(14);
-          }
-          else {
-            if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) > std::atoi(condition2.c_str()));
-            else if (cond_sign == '<') tof = (std::atoi(values[j].c_str()) < std::atoi(condition2.c_str()));
-            else if (cond_sign == '=') tof = (std::atoi(values[j].c_str()) == std::atoi(condition2.c_str()));
+					int j = 0;
+					while (j < variables.size()) {
+						if (variables[j] == condition1) break;
+						else j++;
+					}
+					if (j > variables.size()) {
+						std::cout << "You failed to specify a valid variable for the first half of the conditional on line " << problem << ".\n";
+						std::cout << "The program will now exit.\nError code: 14rg\n";
+						end_n_del(funcs);
+						endp(14);
+					}
+					else {
+						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) > std::atoi(condition2.c_str()));
+						else if (cond_sign == '<') tof = (std::atoi(values[j].c_str()) < std::atoi(condition2.c_str()));
+						else if (cond_sign == '=') tof = (std::atoi(values[j].c_str()) == std::atoi(condition2.c_str()));
 						beg = std::atoi(values[j].c_str());
 						end = std::atoi(condition2.c_str());
 						im_this = "var1";
