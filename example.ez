@@ -6,10 +6,14 @@ show global            ; shows 82 (global version)
 show 90 + 34           ; shows 124
 set global to 73       ; sets a local value to the global variable
 show Type anything     ; warn the user
-set local to input     ; local = 92
+set local to input     ; local = input from user
 show global            ; shows the local value of global variable,
                        ; but shows the global value if no local value is set
-show local             ; shows 92
+if local > 22          ; super secret
+show Found me! I was:  ; secrety secret
+show local             ; show the secret value
+show But also above 22 ; ruin the fun
+done                   ; finish secret
 done                   ; finishes my_func
 call my_func           ; does everything inside of my_func
 show global            ; shows 82, as that is the global value
@@ -24,11 +28,11 @@ while global < 92      ; executes while the conditional is true
 show global            ; shows where global is at
 done                   ; finishes and restarts the loop
 show Reverse now y'all ; warn the user
-call in_file           ; calls the function made in the sauce file
 if global > 50         ; if statement 1
 if global > 81         ; nested if statement 2
 while global > 81      ; nested while loop
 show global            ; only shows if both statements are true
-done                   ; finish while loop 
+done                   ; finish while loop
 done                   ; finish statement 2
 done                   ; finish statement 1
+call in_file           ; calls the function made in the sauce file

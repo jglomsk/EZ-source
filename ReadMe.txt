@@ -64,3 +64,6 @@ Alternative compiling method:
 ## Known Bugs
 
 1. You may have to change the permissions on the interpreter file. An ez fix is to right click your interpreter file, click properties, and make sure you can execute it as a program.
+2. Anything that is nested will be treated as a local variable to that statement.
+	 In other words, if you have a while statement inside of an if statement, the variable in the while statement will not go into the global set of variables, even if it was global.
+	 This is due to the way we interpret the file and use local variables. There may or may not be a fix eventually, but do not expect one.
