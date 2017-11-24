@@ -24,11 +24,11 @@ public:
 	float pemdas(std::string thing);
 	float calc(float x, char sign, float y);
 	void translate(const char* file, // the file itself
-							 	std::vector<std::string> vars = std::vector<std::string>(20), // the variables that are global
-							 	std::vector<std::string> vals = std::vector<std::string>(20), // the values to those variables
-							 	int co = 0, int wya = 0, bool in_func = false, int nested = 0);
+							 	std::vector<std::string>& vars, // the variables that are global
+							 	std::vector<std::string>& vals, // the values to those variables
+							 	int& co, int wya = 0, bool in_func = false, int nested = 0);
 	void while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables,
-								std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this,
+								std::vector<std::string>& values, int k, int i, int& count, int problem, std::string im_this,
 								std::vector<std::string> entire_file, std::string thing, int comment_limit = 0);
 };
 // ends a program
@@ -57,7 +57,7 @@ float Main::calc(float x, char sign, float y)
 	else return 0.0;
 }
 // does the while loop keyword
-void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables, std::vector<std::string>& values, int k, int i, int count, int problem, std::string im_this, std::vector<std::string> entire_file, std::string thing, int comment_limit)
+void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables, std::vector<std::string>& values, int k, int i, int& count, int problem, std::string im_this, std::vector<std::string> entire_file, std::string thing, int comment_limit)
 {
 	int nest = 0;
 	std::ofstream do_me_hard;
@@ -103,7 +103,7 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 	}
 	else if (beg < end) while (beg < end) {
 		for (int p = 0; p < variables.size(); p++) {
-			if (im_this[3] == '1') { // x < 8
+			if (im_this[3] == '1' && variables[p] == thing) { // x < 8
 				values[p] = std::to_string(beg++);
 				if (beg < end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i);
 				break;
@@ -443,13 +443,12 @@ float Main::pemdas(std::string thing)
 }
 // the head honcho of the program
 void Main::translate(const char* file, // the file itself
-							 std::vector<std::string> vars, // the variables that are global
-							 std::vector<std::string> vals, // the values to those variables
-							 int co, int wya, bool in_func, int nested) // co = count of variables, wya = where is the program
+							 std::vector<std::string>& variables, // the variables that are global
+							 std::vector<std::string>& values, // the values to those variables
+							 int& count, int wya, bool in_func, int nested) // co = count of variables, wya = where is the program
 {
 	std::ifstream fp(file);
 	std::vector<std::string> entire_file;
-	int count = co;
 	int newlinesnum = 0;
 	int problem = 0;
 	int nest = nested;
@@ -465,12 +464,6 @@ void Main::translate(const char* file, // the file itself
 		if (entire_file[p] == "\0") newlinesnum--;
 	}
 	fp.close();
-	std::vector<std::string> values(vals.size());
-	std::vector<std::string> variables(vars.size());
-	for (int i = 0; i < 20 && i < 20; i++) {
-		values[i] = vals[i];
-		variables[i] = vars[i];
-	}
 	// begin big loop
 	for (int i = 0; i < newlinesnum; i++) {
 		if (in_func) problem = abs(wya - (newlinesnum - i));
@@ -488,7 +481,7 @@ void Main::translate(const char* file, // the file itself
 			}
 			try {
 				std::ifstream fp_test(fp_add.c_str());
-				if (fp_test) translate(fp_add.c_str(), variables, values, count, i, false);
+				if (fp_test) translate(fp_add.c_str(), variables, values, count);
 				else throw 107;
 			} catch (...) {
 				std::cout << "Import Error.\nCheck your import file and make sure you typed the correct file name.\n";
@@ -829,7 +822,9 @@ void Main::translate(const char* file, // the file itself
 					endp(411614);
 				}
 				if (funcs[j] == call_name) {
-					translate(funcs[j].c_str(), variables, values, count, i, true);
+					std::vector<std::string> varTemp = variables;
+					std::vector<std::string> valTemp = values;
+					translate(funcs[j].c_str(), varTemp, valTemp, count, i, true);
 				}
 			}
 		}
@@ -856,13 +851,13 @@ void Main::translate(const char* file, // the file itself
 				}
 				else {
 					for (int p = 0;; p++) {
-						if (entire_file[i][k] == variables[p][0]) {
+						if (entire_file[i][k] == variables[p][0] || count == p) {
 							std::string thing = "";
 							bool not_done = false;
 							int here = 0;
 							for (int e = k; e < stop_here && entire_file[i][e] != ' '; e++) {
 								thing += entire_file[i][e];
-								here = e;
+								here = e + 1;
 							}
 							if (entire_file[i].find_first_of("1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) < stop_here &&
 							entire_file[i].find_first_of("1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) != std::string::npos) not_done = true;
@@ -871,23 +866,19 @@ void Main::translate(const char* file, // the file itself
 								std::cout << '\n';
 								break;
 							}
-							else {
+							else if (not_done || p == count) {
 								for (int b = k; b < stop_here; b++) {
 									std::cout << entire_file[i][b];
 								}
 								std::cout << '\n';
+								break;
+								break;
 							}
 						}
 						else if (p < count - 1) {}
 						else if (p >= count) {
 							break;
 							break;
-						}
-						else {
-							for (int b = k; b < stop_here; b++) {
-								std::cout << entire_file[i][b];
-							}
-							std::cout << '\n';
 						}
 					}
 				}
@@ -953,7 +944,7 @@ void Main::translate(const char* file, // the file itself
 						else {
 							if (copy_k < stop_here) {
 								while (copy_k < stop_here && entire_file[i][copy_k] != ' ') {
-									values[count] += (entire_file[i].at(copy_k));
+									values[count].push_back(entire_file[i].at(copy_k));
 									copy_k++;
 								}
 								if (values[count] == "input") {

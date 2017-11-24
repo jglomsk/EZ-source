@@ -6,7 +6,10 @@ int main(int argc, char** argv)
 		endp(1);
 	} else {
 		Main x;
-		x.translate(argv[1]);
+		std::vector<std::string> varis(20);
+		std::vector<std::string> valis(20);
+		int count = 0;
+		x.translate(argv[1], varis, valis, count);
 		x.end_n_del(x.funcs);
 		endp(0, x.flush);
 	}

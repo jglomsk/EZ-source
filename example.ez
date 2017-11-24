@@ -36,3 +36,4 @@ done                   ; finish while loop
 done                   ; finish statement 2
 done                   ; finish statement 1
 call in_file           ; calls the function made in the sauce file
+show file_var          ; shows the variable created inside the imported file

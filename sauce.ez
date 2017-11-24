@@ -1,5 +1,6 @@
-show Import all good!
-make in_file do
-show I'm in a function!
-show I can be repeated whenever!
-done
+show Import all good!            ; tell the user the import succeeded
+set file_var to 55               ; set a variable inside a file
+make in_file do                  ; make a function too if you want
+show I'm in a function!          ; yes you are
+show I can be repeated whenever! ; yes you can
+done                             ; finish the function started on line 3
