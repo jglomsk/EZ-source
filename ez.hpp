@@ -15,6 +15,8 @@
 #include <vector>
 #include <string>
 #include <cctype>
+#include <cstring>
+#include "mere.hpp"
 class Main {
 public:
 	std::vector<std::string> funcs; // need this for function keeping and file deleting at the end
@@ -22,42 +24,18 @@ public:
 	int flush;
 	void end_n_del(std::vector<std::string> vals);
 	float pemdas(std::string thing);
-	float calc(float x, char sign, float y);
 	void translate(const char* file, // the file itself
 							 	std::vector<std::string>& vars, // the variables that are global
 							 	std::vector<std::string>& vals, // the values to those variables
+							 	std::vector<std::vector<var> >& baskets,
 							 	int& co, int wya = 0, bool in_func = false, int nested = 0);
 	void while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables,
-								std::vector<std::string>& values, int k, int i, int& count, int problem, std::string im_this,
+								std::vector<std::string>& values, std::vector<std::vector<var> >& baskets,
+								int k, int i, int& count, int problem, std::string im_this,
 								std::vector<std::string> entire_file, std::string thing, int comment_limit = 0);
 };
-// ends a program
-int endp(int val, int flush = 0)
-{
-	std::cout << "Press enter to continue...";
-	std::cin.clear();
-	if (flush) std::cin.get();
-	std::cin.ignore();
-	exit(val);
-	return (val);
-}
-// is a calculator
-float Main::calc(float x, char sign, float y)
-{
-	if (sign == '*') return x * y;
-	else if (sign == '/') return x / y;
-	else if (sign == '+') return x + y;
-	else if (sign == '-') return x - y;
-	else if (sign == '^') {
-		if (y == 0) return 1.0;
-		float a = x;
-		for (int i = 1; i < (int)y; i++) x *= a;
-		return x;
-	}
-	else return 0.0;
-}
 // does the while loop keyword
-void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables, std::vector<std::string>& values, int k, int i, int& count, int problem, std::string im_this, std::vector<std::string> entire_file, std::string thing, int comment_limit)
+void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables, std::vector<std::string>& values, std::vector<std::vector<var> >& baskets, int k, int i, int& count, int problem, std::string im_this, std::vector<std::string> entire_file, std::string thing, int comment_limit)
 {
 	int nest = 0;
 	std::ofstream do_me_hard;
@@ -71,7 +49,7 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 			nest--;
 			do_me_hard << "done\n";
 		}
-		else if (entire_file[i].find("done") != std::string::npos) break;
+		else if (entire_file[i].find("done") != std::string::npos && entire_file[i].find("done") < comment_limit && nest <= 0) break;
 		else if (i == newlinesnum) {
 			std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
 			std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
@@ -92,12 +70,12 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x > 8
 				values[p] = std::to_string(beg--);
-				if (beg > end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i);
+				if (beg > end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg--;
-				if (beg > end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i);
+				if (beg > end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i);
 			}
 		}
 	}
@@ -105,12 +83,12 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x < 8
 				values[p] = std::to_string(beg++);
-				if (beg < end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i);
+				if (beg < end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg++;
-				if (beg < end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i);
+				if (beg < end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i);
 			}
 		}
 	}
@@ -398,10 +376,10 @@ float Main::pemdas(std::string thing)
 			wo_comments[i] == '/' ||
 			wo_comments[i] == '-') {
 			if (curr_ans && y != "") {
-				curr_ans = calc(curr_ans, sign, ::atof(y.c_str()));
+				curr_ans = Math::calc(curr_ans, sign, ::atof(y.c_str()));
 			}
 			else if (x != "" && y != "" && sign != '\0') {
-				curr_ans = calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
+				curr_ans = Math::calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
 			}
 			sign = wo_comments[i];
 			now_switch = true;
@@ -409,7 +387,7 @@ float Main::pemdas(std::string thing)
 		}
 		else if (now_switch && (isdigit(wo_comments[i]) || wo_comments[i] == '.')) {
 			if (wo_comments[i] == '\0') {
-				curr_ans = calc(curr_ans, sign, ::atof(y.c_str()));
+				curr_ans = Math::calc(curr_ans, sign, ::atof(y.c_str()));
 				break;
 			}
 			else {
@@ -420,7 +398,7 @@ float Main::pemdas(std::string thing)
 			in_parens = true;
 		}
 		else if (wo_comments[i] == ')' && in_parens) {
-			curr_ans = calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
+			curr_ans = Math::calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
 			x = "";
 			y = "";
 			in_parens = false;
@@ -428,13 +406,13 @@ float Main::pemdas(std::string thing)
 		}
 		else if (wo_comments[i] == '\0' && curr_ans) {
 			if (y != "") {
-				curr_ans = calc(curr_ans, sign, ::atof(y.c_str()));
+				curr_ans = Math::calc(curr_ans, sign, ::atof(y.c_str()));
 			}
 			break;
 		}
 		else if (wo_comments[i] == '\0') {
 			if (curr_ans == 0) {
-				curr_ans = calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
+				curr_ans = Math::calc(::atof(x.c_str()), sign, ::atof(y.c_str()));
 			}
 			break;
 		}
@@ -445,6 +423,7 @@ float Main::pemdas(std::string thing)
 void Main::translate(const char* file, // the file itself
 							 std::vector<std::string>& variables, // the variables that are global
 							 std::vector<std::string>& values, // the values to those variables
+							 std::vector<std::vector<var> >& baskets,
 							 int& count, int wya, bool in_func, int nested) // co = count of variables, wya = where is the program
 {
 	std::ifstream fp(file);
@@ -481,7 +460,7 @@ void Main::translate(const char* file, // the file itself
 			}
 			try {
 				std::ifstream fp_test(fp_add.c_str());
-				if (fp_test) translate(fp_add.c_str(), variables, values, count);
+				if (fp_test) translate(fp_add.c_str(), variables, values, baskets, count);
 				else throw 107;
 			} catch (...) {
 				std::cout << "Import Error.\nCheck your import file and make sure you typed the correct file name.\n";
@@ -507,11 +486,13 @@ void Main::translate(const char* file, // the file itself
 			}
 			if (cond_sign == '>' ||
 					cond_sign == '<' ||
-					cond_sign == '=') {
+					cond_sign == '=' ||
+					cond_sign == '!') {
 				if (isdigit(condition1[0]) && isdigit(condition2[0])) {
 					if (cond_sign == '>') tof = (std::atoi(condition1.c_str()) > std::atoi(condition2.c_str()));
 					else if (cond_sign == '<') tof = (std::atoi(condition1.c_str()) < std::atoi(condition2.c_str()));
 					else if (cond_sign == '=') tof = (std::atoi(condition1.c_str()) == std::atoi(condition2.c_str()));
+					else if (cond_sign == '!') tof = (std::atoi(condition1.c_str()) != std::atoi(condition2.c_str()));
 				}
 				else if (!isdigit(condition1[0]) && !isdigit(condition2[0])) {
 					int a = 0;
@@ -534,6 +515,7 @@ void Main::translate(const char* file, // the file itself
 						if (cond_sign == '>') tof = (std::atoi(values[a].c_str()) > std::atoi(values[b].c_str()));
 						else if (cond_sign == '<') tof = (std::atoi(values[a].c_str()) < std::atoi(values[b].c_str()));
 						else if (cond_sign == '=') tof = (atof(values[a].c_str()) == atof(values[b].c_str()));
+						else if (cond_sign == '!') tof = (atof(values[a].c_str()) != atof(values[b].c_str()));
 					}
 				}
 				else if (isdigit(condition2.c_str()[0])) {
@@ -552,6 +534,7 @@ void Main::translate(const char* file, // the file itself
 						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) > std::atoi(condition2.c_str()));
 						else if (cond_sign == '<') tof = (std::atoi(values[j].c_str()) < std::atoi(condition2.c_str()));
 						else if (cond_sign == '=') tof = (std::atoi(values[j].c_str()) == std::atoi(condition2.c_str()));
+						else if (cond_sign == '!') tof = (std::atoi(values[j].c_str()) != std::atoi(condition2.c_str()));
 					}
 				}
 				else if (isdigit(condition1[0])) {
@@ -570,6 +553,7 @@ void Main::translate(const char* file, // the file itself
 						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) < std::atoi(condition1.c_str()));
 						else if (cond_sign == '<') tof = (std::atoi(values[j].c_str()) > std::atoi(condition1.c_str()));
 						else if (cond_sign == '=') tof = (std::atoi(values[j].c_str()) == std::atoi(condition1.c_str()));
+						else if (cond_sign == '!') tof = (std::atoi(values[j].c_str()) != std::atoi(condition1.c_str()));
 					}
 				}
 				if (tof) {
@@ -596,12 +580,12 @@ void Main::translate(const char* file, // the file itself
 							nest--;
 							do_me_hard << "done\n";
 						}
-						else if (entire_file[i].find("done") != std::string::npos && nest == 0 && entire_file[i].find("done") < comment_limit) break;
+						else if (entire_file[i].find("done") != std::string::npos && entire_file[i].find("done") < comment_limit) break;
 						char put_me_in_coach = entire_file[i][j - 1];
 						do_me_hard << put_me_in_coach;
 					}
 					do_me_hard.close();
-					translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, count, i, false, nest);
+					translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i, false, nest);
 					remove(std::string("conditional" + std::to_string(problem)).c_str());
 				}
 				else {
@@ -642,11 +626,58 @@ void Main::translate(const char* file, // the file itself
 					else_file << put_me_in_coach;
 				}
 				else_file.close();
-				translate(else_f, variables, values, count, i);
+				translate(else_f, variables, values, baskets, count, i);
 				remove(else_f);
 			}
 			else {
 				while (entire_file[i].find("done") == std::string::npos) i++;
+			}
+		}
+		// keyword push
+		else if (entire_file[i].find("push") != std::string::npos && entire_file[i].find("push") < comment_limit) {
+			int k = entire_file[i].find("push") + 4;
+			while (entire_file[i][k] == ' ') k++;
+			std::string thing = "";
+			std::string basket_im_adding_to = "";
+			for (; entire_file[i][k] != ' ' && k < comment_limit; k++) {
+				thing += entire_file[i][k];
+			}
+			while (entire_file[i][k] == ' ') k++;
+			if (entire_file[i].find("into") != std::string::npos && entire_file[i].find("into") < comment_limit) k += 4;
+			else {
+				std::cout << "You did not include the keyword \"into\" in your push statement on line " << problem << ".\n";
+				std::cout << "The program will now exit.\n";
+				std::cout << "Error code: 1n70\n";
+				end_n_del(funcs);
+				endp(170);
+			}
+			while (entire_file[i][k] == ' ') k++;
+			for (; entire_file[i][k] != ' ' && entire_file[i][k] != '\0' && k < comment_limit; k++) {
+				basket_im_adding_to += entire_file[i][k];
+			}
+			for (int e = 0;; e++) {
+				if (!baskets.empty() == true) {
+					if (basket_im_adding_to == baskets[e][0].getsdata()) {
+						if (isdigit(thing.c_str()[0])) baskets[e].push_back(var(std::atoi(thing.c_str())));
+						else {
+							for (int y = 0;; y++) {
+								if (thing == variables[y]) {
+									baskets[e].push_back(values[y].c_str());
+									break;
+								}
+								else if (y == variables.size() - 1) {
+									baskets[e].push_back(thing.c_str());
+									break;
+								}
+							}
+						}
+						break;
+					}
+					else if (e == baskets.size()) {
+						std::cout << "You failed to push something into the basket on line " << problem << ".\n";
+						break;
+					}
+				}
 			}
 		}
 		// keyword while
@@ -671,11 +702,13 @@ void Main::translate(const char* file, // the file itself
 			}
 			if (cond_sign == '>' ||
 					cond_sign == '<' ||
-					cond_sign == '=') {
+					cond_sign == '=' ||
+					cond_sign == '!') {
 				if (isdigit(condition1[0]) && isdigit(condition2[0])) {
 					if (cond_sign == '>') tof = (std::atoi(condition1.c_str()) > std::atoi(condition2.c_str()));
 					else if (cond_sign == '<') tof = (std::atoi(condition1.c_str()) < std::atoi(condition2.c_str()));
 					else if (cond_sign == '=') tof = (std::atoi(condition1.c_str()) == std::atoi(condition2.c_str()));
+					else if (cond_sign == '!') tof = (std::atoi(condition1.c_str()) != std::atoi(condition2.c_str()));
 					beg = std::atoi(condition1.c_str());
 					end = std::atoi(condition2.c_str());
 					im_this = "2num";
@@ -701,6 +734,7 @@ void Main::translate(const char* file, // the file itself
 						if (cond_sign == '>') tof = (std::atoi(values[a].c_str()) > std::atoi(values[b].c_str()));
 						else if (cond_sign == '<') tof = (std::atoi(values[a].c_str()) < std::atoi(values[b].c_str()));
 						else if (cond_sign == '=') tof = (std::atoi(values[a].c_str()) == std::atoi(values[b].c_str()));
+						else if (cond_sign == '!') tof = (std::atoi(values[a].c_str()) != std::atoi(values[b].c_str()));
 						beg = std::atoi(values[a].c_str());
 						end = std::atoi(values[b].c_str());
 						im_this = "2var";
@@ -722,6 +756,7 @@ void Main::translate(const char* file, // the file itself
 						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) > std::atoi(condition2.c_str()));
 						else if (cond_sign == '<') tof = (std::atoi(values[j].c_str()) < std::atoi(condition2.c_str()));
 						else if (cond_sign == '=') tof = (std::atoi(values[j].c_str()) == std::atoi(condition2.c_str()));
+						else if (cond_sign == '!') tof = (std::atoi(values[j].c_str()) != std::atoi(condition2.c_str()));
 						beg = std::atoi(values[j].c_str());
 						end = std::atoi(condition2.c_str());
 						im_this = "var1";
@@ -744,6 +779,7 @@ void Main::translate(const char* file, // the file itself
 						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) < std::atoi(condition1.c_str()));
 						else if (cond_sign == '<') tof = (std::atoi(values[j].c_str()) > std::atoi(condition1.c_str()));
 						else if (cond_sign == '=') tof = (std::atoi(values[j].c_str()) == std::atoi(condition1.c_str()));
+						else if (cond_sign == '!') tof = (std::atoi(values[j].c_str()) != std::atoi(condition1.c_str()));
 						beg = std::atoi(condition1.c_str());
 						end = std::atoi(values[j].c_str());
 						im_this = "var2";
@@ -752,7 +788,7 @@ void Main::translate(const char* file, // the file itself
 				}
 			}
 			if (tof) {
-				while_loop_guts(beg, end, newlinesnum, variables, values, k, i, count, problem, im_this, entire_file, thing, comment_limit);
+				while_loop_guts(beg, end, newlinesnum, variables, values, baskets, k, i, count, problem, im_this, entire_file, thing, comment_limit);
 				remove(std::string("conditional" + std::to_string(problem)).c_str());
 			}
 		}
@@ -824,7 +860,7 @@ void Main::translate(const char* file, // the file itself
 				if (funcs[j] == call_name) {
 					std::vector<std::string> varTemp = variables;
 					std::vector<std::string> valTemp = values;
-					translate(funcs[j].c_str(), varTemp, valTemp, count, i, true);
+					translate(funcs[j].c_str(), varTemp, valTemp, baskets, count, i, true);
 				}
 			}
 		}
@@ -859,12 +895,35 @@ void Main::translate(const char* file, // the file itself
 								thing += entire_file[i][e];
 								here = e + 1;
 							}
-							if (entire_file[i].find_first_of("1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) < stop_here &&
-							entire_file[i].find_first_of("1234567890-=qwertyuiop[]\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) != std::string::npos) not_done = true;
+							if (entire_file[i].find_first_of("1234567890-=qwertyuiop\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) < stop_here &&
+							entire_file[i].find_first_of("1234567890-=qwertyuiop\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) != std::string::npos) not_done = true;
 							if (thing == variables[p] && !not_done) {
 								std::cout << values[p];
 								std::cout << '\n';
 								break;
+							}
+							else if (!not_done && !baskets.empty()) {
+								for (int y = 0; y < baskets.size(); y++) {
+									if (thing == baskets[y][0].getsdata() && thing.find('[') == std::string::npos) {
+										for (int m = 1; m < baskets[y].size(); m++) std::cout << (m - 1) << ": " << baskets[y][m] << '\n';
+										break;
+										break;
+										break;
+									}
+									else if (thing.find('[') != std::string::npos) {
+										std::string u = "";
+										std::string new_thing = "";
+										for (int j = 0; thing[j] != '['; j++) {
+											new_thing += thing[j];
+										}
+										for (int m = thing.find('[') + 1; m < thing.size() && thing[m] != ']'; m++) {
+											u += thing[m];
+										}
+										if (new_thing == baskets[y][0].getsdata()) {
+											std::cout << baskets[y][std::atoi(u.c_str()) + 1] << '\n';
+										}
+									}
+								}
 							}
 							else if (not_done || p == count) {
 								for (int b = k; b < stop_here; b++) {
@@ -951,6 +1010,13 @@ void Main::translate(const char* file, // the file itself
 									values[count] = "";
 									std::cin >> values[count];
 									flush++;
+								}
+								else if (values[count] == "basket") {
+									std::vector<var> push_me;
+									push_me.push_back(variables[count].c_str());
+									values[count] = "";
+									variables[count] = "";
+									baskets.push_back(push_me);
 								}
 							} else throw 537;
 						}
