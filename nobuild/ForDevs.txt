@@ -17,8 +17,8 @@ Note that you must be on the list of contributors in order to commit to git.
 If you are not on that list, simply request access by emailing realezlang@gmail.com
 
 Now for the commands to the aliases above:
-alias runOut='g++ EZ.cpp -m32 -std=c++11 -o ez.out; ./ez.out example.ez'
-alias debugr='g++ EZ.cpp -g -std=c++11 -m32 -o bugs.out; gdb bugs.out; echo "Are you done debugging?"; read y_or_n; while [ "$y_or_n" != "y" ]; do gdb bugs.out; echo "Are you done debugging?"; read y_or_n; done; if [ "$y_or_n" == "y" ]; then rm -rf bugs.out; fi'
-alias runWin='i686-w64-mingw32-g++ EZ.cpp -std=c++11 -o ez.exe -static; wineconsole --backend=curses "ez.exe" "example.ez"'
-alias runWeb='g++ web.cpp -std=c++11 -o ez_web.out; echo "show hello world!" > web.ez; ./ez_web.out web.ez'
+alias runOut='cd ~/workspace/source/; g++ EZ.cpp -m32 -std=c++11 -o ez.out; ./ez.out example.ez'
+alias debugr='cd ~/workspace/source/; g++ EZ.cpp -g -std=c++11 -m32 -o bugs.out; gdb bugs.out; echo "Are you done debugging?"; read y_or_n; while [ "$y_or_n" != "y" ]; do gdb bugs.out; echo "Are you done debugging?"; read y_or_n; done; if [ "$y_or_n" == "y" ]; then rm -rf bugs.out; fi'
+alias runWin='cd ~/workspace/source/; i686-w64-mingw32-g++ EZ.cpp -std=c++11 -o ez.exe -static; wineconsole --backend=curses "ez.exe" "example.ez"'
+alias runWeb='cd ~/workspace/source/; g++ web.cpp -std=c++11 -o ez_web.out; echo "show hello world!" > web.ez; ./ez_web.out web.ez'
 alias updatr="sudo -- sh -c 'apt-get update; apt-get upgrade -y; apt-get dist-upgrade -y; apt-get autoremove -y; apt-get autoclean -y; if [ -f /var/run/reboot-required ]; then echo \"Restart required for updates to go through.\"; read -n1 -p \"Restart the computer? [y,n]: \" y_or_n; if [ \"$y_or_n\" == \"y\" ]; then printf \"\n\"; sudo shutdown -r; else printf \"\n\"; echo \"Restart declined.\"; fi; fi'"

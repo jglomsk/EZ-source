@@ -27,6 +27,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <climits>
 #include <ctime>
 // var class, similar to Java's Object
 class var {
@@ -451,8 +452,10 @@ void nullify(T& to_null)
 int endp(int val, int flush = 0)
 {
 	std::cout << "Press enter to continue...";
-	std::cin.clear();
-	if (flush) std::cin.get();
+	if (flush > 0) {
+		std::cin.clear();
+		std::cin.get();
+	}
 	std::cin.ignore();
 	exit(val);
 	return (val);
