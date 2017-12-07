@@ -1,4 +1,4 @@
-with all.ez            ; try importing
+with sauce.ez          ; try importing
 set global to 82       ; global = 82
 show global            ; shows 82
 make my_func do        ; makes my_func a function

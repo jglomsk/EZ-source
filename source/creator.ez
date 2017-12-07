@@ -1,0 +1,13 @@
+set ez_basket to basket
+push word into ez_basket
+push 82 into ez_basket
+make creator do
+show This is all I did!
+show
+show set ez_basket to basket
+show push word into ez_basket
+show push 82 into ez_basket
+show
+show Now ez_basket looks like this!
+show ez_basket
+done
