@@ -17,6 +17,11 @@
 #include <cctype>
 #include <cstring>
 #include "mere.hpp"
+#ifdef _WIN32
+	#define PLATFORM 1
+#else
+	#define PLATFORM 2
+#endif
 class Main {
 public:
 	std::vector<std::string> funcs; // need this for function keeping and file deleting at the end
@@ -492,11 +497,12 @@ void Main::translate(const char* file, // the file itself
 			} catch (...) {
 				try {
 					std::string fp_copy = "";
-					#ifdef _WIN32
+					if (PLATFORM == 1) {
 						fp_copy = std::string("\"C:\\Program Files\\EZ\\") + fp_add + std::string("\"");
-					#else
+					}
+					else if (PLATFORM == 2) {
 						fp_copy = std::string("/usr/share/ez/") + fp_add;
-					#endif
+					}
 					std::ifstream fp_test(fp_copy.c_str());
 					if (fp_test) translate(fp_copy.c_str(), variables, values, baskets, count);
 					else throw 107;

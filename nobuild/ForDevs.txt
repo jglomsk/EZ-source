@@ -12,6 +12,7 @@ runWin = Compiles and runs the program in a windows environment for 32 bit (whic
 debugr = Compiles and runs gdb for the program, of which you can run line by line. Type this into a terminal for more on debugging: man gdb
 runWeb = Compiles and runs the program for our website version (of which isn't too different from the linux version).
 updatr = Updates the system that our server is on. Simply grabs updates and installs them.
+cmpltr = Compiles every version of the program, then copies those finished files to the upload folder. Afterwards, runs the commands in updatr.
 
 Note that you must be on the list of contributors in order to commit to git.
 If you are not on that list, simply request access by emailing realezlang@gmail.com
@@ -21,4 +22,5 @@ alias runOut='cd ~/workspace/source/; g++ EZ.cpp -m32 -std=c++11 -o ez.out; ./ez
 alias debugr='cd ~/workspace/source/; g++ EZ.cpp -g -std=c++11 -m32 -o bugs.out; gdb bugs.out; echo "Are you done debugging?"; read y_or_n; while [ "$y_or_n" != "y" ]; do gdb bugs.out; echo "Are you done debugging?"; read y_or_n; done; if [ "$y_or_n" == "y" ]; then rm -rf bugs.out; fi'
 alias runWin='cd ~/workspace/source/; i686-w64-mingw32-g++ EZ.cpp -std=c++11 -o ez.exe -static; wineconsole --backend=curses "ez.exe" "example.ez"'
 alias runWeb='cd ~/workspace/source/; g++ web.cpp -std=c++11 -o ez_web.out; echo "show hello world!" > web.ez; ./ez_web.out web.ez'
-alias updatr="sudo -- sh -c 'apt-get update; apt-get upgrade -y; apt-get dist-upgrade -y; apt-get autoremove -y; apt-get autoclean -y; if [ -f /var/run/reboot-required ]; then echo \"Restart required for updates to go through.\"; read -n1 -p \"Restart the computer? [y,n]: \" y_or_n; if [ \"$y_or_n\" == \"y\" ]; then printf \"\n\"; sudo shutdown -r; else printf \"\n\"; echo \"Restart declined.\"; fi; fi'"
+alias updatr="sudo -- sh -c 'apt-get update; apt-get upgrade -y; apt-get dist-upgrade -y; apt-get autoremove -y; apt-get autoclean -y'"
+alias cmpltr="cd ~/workspace/source/; g++ EZ.cpp -m32 -std=c++11 -o ez.out; cd ~/workspace/source/; i686-w64-mingw32-g++ EZ.cpp -std=c++11 -o ez.exe -static; cd ~/workspace/source/; g++ web.cpp -std=c++11 -o ez_web.out; echo \"Compiling complete.\"; sudo -- sh -c 'cp ~/workspace/source/ez.out ~/workspace/uploadtoEZ-lang/ez.out; cp ~/workspace/source/ez.exe ~/workspace/uploadtoEZ-lang/ez.exe; cp ~/workspace/nobuild/eznix_install.sh ~/workspace/uploadtoEZ-lang/eznix_install.sh; cp ~/workspace/source/example.ez ~/workspace/uploadtoEZ-lang/example.ez; cp ~/workspace/nobuild/help.ez ~/workspace/uploadtoEZ-lang/help.ez; cp ~/workspace/source/sauce.ez ~/workspace/uploadtoEZ-lang/sauce.ez; echo \"Copying complete.\"; apt-get update; apt-get upgrade -y; apt-get dist-upgrade -y; apt-get autoremove -y; apt-get autoclean -y'; echo \"Server update complete.\"; cd ~/workspace/; echo \"I'm now going to show you everything that has changed.\"; git status"
