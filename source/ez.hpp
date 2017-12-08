@@ -16,6 +16,7 @@
 #include <string>
 #include <cctype>
 #include <cstring>
+#include <cstdio>
 #include "mere.hpp"
 #ifdef _WIN32
 	#define PLATFORM 1
@@ -27,7 +28,8 @@ public:
 	std::vector<std::string> funcs; // need this for function keeping and file deleting at the end
 	bool tof;
 	int flush = 0;
-	void end_n_del(std::vector<std::string> vals);
+	int line_count;
+	void end_n_del(std::vector<std::string> vals, int line_count = 100);
 	float pemdas(std::string thing);
 	void translate(const char* file, // the file itself
 							 	std::vector<std::string>& vars, // the variables that are global
@@ -78,7 +80,7 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 			std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
 			std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
 			std::cout << "Error code: 60n3\n";
-			end_n_del(funcs);
+			end_n_del(funcs, problem);
 			endp(603, flush);
 		}
 		else if (j > entire_file[i].size()) {
@@ -118,10 +120,15 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 	}
 }
 // deletes the function files
-void Main::end_n_del(std::vector<std::string> values)
+void Main::end_n_del(std::vector<std::string> values, int lines)
 {
 	for (int i = 0; i < funcs.size(); i++) {
 		remove(values[i].c_str());
+	}
+	for (int i = 0; i < lines; i++) {
+		remove(std::string("else" + std::to_string(i)).c_str());
+		remove(std::string("if" + std::to_string(i)).c_str());
+		remove(std::string("while" + std::to_string(i)).c_str());
 	}
 }
 // turns a string equation into a real float
@@ -508,7 +515,7 @@ void Main::translate(const char* file, // the file itself
 					else throw 107;
 				} catch (...) {
 					std::cout << "Import Error.\nCheck your import file and make sure you typed the correct file name.\n";
-					end_n_del(funcs);
+					end_n_del(funcs, problem);
 					endp(107, flush);
 				}
 			}
@@ -561,7 +568,7 @@ void Main::translate(const char* file, // the file itself
 					if (a > variables.size() || b > variables.size()) {
 						std::cout << "You failed to specify valid variables in the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: g3n4rg\n";
-						end_n_del(funcs);
+						end_n_del(funcs, problem);
 						endp(34, flush);
 					}
 					else {
@@ -580,7 +587,7 @@ void Main::translate(const char* file, // the file itself
 					if (j > variables.size()) {
 						std::cout << "You failed to specify a valid variable for the first half of the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: 14rg\n";
-						end_n_del(funcs);
+						end_n_del(funcs, problem);
 						endp(14, flush);
 					}
 					else {
@@ -599,7 +606,7 @@ void Main::translate(const char* file, // the file itself
 					if (j == variables.size()) {
 						std::cout << "You failed to specify a valid variable for the second half of the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: 24rg\n";
-						end_n_del(funcs);
+						end_n_del(funcs, problem);
 						endp(24, flush);
 					}
 					else {
@@ -617,7 +624,7 @@ void Main::translate(const char* file, // the file itself
 							std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
 							std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
 							std::cout << "Error code: 60n3\n";
-							end_n_del(funcs);
+							end_n_del(funcs, problem);
 							endp(603, flush);
 						}
 						else if (j > entire_file[i].size()) {
@@ -667,7 +674,7 @@ void Main::translate(const char* file, // the file itself
 			else {
 				std::cout << "You did not specify a conditional character on line " << problem << ".\nThe program will now exit.";
 				std::cout << "Error code: c0n651gn\n";
-				end_n_del(funcs);
+				end_n_del(funcs, problem);
 				endp(651, flush);
 			}
 		}
@@ -724,8 +731,8 @@ void Main::translate(const char* file, // the file itself
 					else_file << put_me_in_coach;
 				}
 				else_file.close();
-				translate(else_f, variables, values, baskets, count, i);
-				remove(else_f);
+				translate(else_f, variables, values, baskets, count, i, 0);
+				std::remove(else_f);
 			}
 			else {
 				while (entire_file[i].find("done") == std::string::npos) i++;
@@ -754,7 +761,7 @@ void Main::translate(const char* file, // the file itself
 				std::cout << "You did not include the keyword \"into\" in your push statement on line " << problem << ".\n";
 				std::cout << "The program will now exit.\n";
 				std::cout << "Error code: 1n70\n";
-				end_n_del(funcs);
+				end_n_del(funcs, problem);
 				endp(170, flush);
 			}
 			while (entire_file[i][k] == ' ') k++;
@@ -841,7 +848,7 @@ void Main::translate(const char* file, // the file itself
 					if (a > variables.size() || b > variables.size()) {
 						std::cout << "You failed to specify valid variables in the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: g3n4rg\n";
-						end_n_del(funcs);
+						end_n_del(funcs, problem);
 						endp(34, flush);
 					}
 					else {
@@ -863,7 +870,7 @@ void Main::translate(const char* file, // the file itself
 					if (j > variables.size()) {
 						std::cout << "You failed to specify a valid variable for the first half of the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: 14rg\n";
-						end_n_del(funcs);
+						end_n_del(funcs, problem);
 						endp(14, flush);
 					}
 					else {
@@ -886,7 +893,7 @@ void Main::translate(const char* file, // the file itself
 					if (j == variables.size()) {
 						std::cout << "You failed to specify a valid variable for the second half of the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: 24rg\n";
-						end_n_del(funcs);
+						end_n_del(funcs, problem);
 						endp(24, flush);
 					}
 					else {
@@ -932,14 +939,14 @@ void Main::translate(const char* file, // the file itself
 					std::cout << "Your function did not have a \"done\" statement before the end of the file.\n";
 					std::cout << "The failed function started on line " << problem << ". The program will now exit.\n";
 					std::cout << "Error code: 60n3\n";
-					end_n_del(funcs);
+					end_n_del(funcs, problem);
 					endp(603, flush);
 				}
 				else if (entire_file[i].find("call " + func_name) != std::string::npos) {
 					std::cout << "You called a function before you finished making it on line " << problem << ".\n";
 					std::cout << "The program will now exit.\n";
 					std::cout << "Error code: c411d0n3\n";
-					end_n_del(funcs);
+					end_n_del(funcs, problem);
 					endp(41103, flush);
 				}
 				else if (j > entire_file[i].size()) {
@@ -1003,7 +1010,7 @@ void Main::translate(const char* file, // the file itself
 				if (call_name == "") {
 					std::cout << "You failed to call a specific function on line " << problem << ". The program will now exit.\n";
 					std::cout << "Error code: c411614nk\n";
-					end_n_del(funcs);
+					end_n_del(funcs, problem);
 					endp(411614, flush);
 				}
 				if (funcs[j] == call_name) {
@@ -1079,6 +1086,14 @@ void Main::translate(const char* file, // the file itself
 										if (new_thing == baskets[y][0].getsdata()) {
 											std::cout << baskets[y][std::atoi(u.c_str()) + 1] << '\n';
 										}
+									}
+									else if (y == baskets.size() - 1) {
+										for (int b = k; b < stop_here; b++) {
+											std::cout << entire_file[i][b];
+										}
+										std::cout << '\n';
+										break;
+										break;
 									}
 								}
 							}
@@ -1195,9 +1210,10 @@ void Main::translate(const char* file, // the file itself
 				std::cout << "Your variable failed on line " << problem << ". Did you set a value to it?\n";
 				std::cout << "The program will now exit.\n";
 				std::cout << "Error code: " << e << std::endl;
-				end_n_del(funcs);
+				end_n_del(funcs, problem);
 				endp(e, flush);
 			}
 		}
+		line_count = i;
 	}
 }

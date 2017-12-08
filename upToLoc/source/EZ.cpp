@@ -11,7 +11,7 @@ int main(int argc, char** argv)
 		std::vector<std::vector<var> > baskets;
 		int count = 0;
 		x.translate(argv[1], varis, valis, baskets, count);
-		x.end_n_del(x.funcs);
+		x.end_n_del(x.funcs, x.line_count);
 		endp(0, x.flush);
 	}
 }

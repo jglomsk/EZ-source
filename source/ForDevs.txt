@@ -7,8 +7,8 @@ We have given a set of commands to make your life easier:
 
 Helper = What it does
 ---------------------
-runOut = Compiles and runs the program for a Mac/Linux environment for 32 bit (which will also run on 64 bit).
-runWin = Compiles and runs the program in a windows environment for 32 bit (which will also run on 64 bit).
+runOut = Compiles and runs the program for a Mac/Linux environment for 64 bit.
+runWin = Compiles and runs the program in a windows environment for 64 bit.
 debugr = Compiles and runs gdb for the program, of which you can run line by line. Type this into a terminal for more on debugging: man gdb
 runWeb = Compiles and runs the program for our website version (of which isn't too different from the linux version).
 updatr = Updates the system that our server is on. Simply grabs updates and installs them.

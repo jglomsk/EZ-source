@@ -4,7 +4,7 @@ Intro.........................Line 9
 Keywords......................Line 19
 Running.......................Line 47
 Known Bugs....................Line 80
-Updates.......................Line 93
+Updates.......................Line 90
 
 ## Introduction
 
@@ -86,9 +86,6 @@ Another alternative (FOR MAC/LINUX ONLY):
 2. If you type the full path to your ez FILE (not to be confused with the interpreter) and include a source file via the "with" keyword, you may run into some issues running your ez file.
 	A: We suggest putting all your ez files that you want to use in the same place, then running one ez file at a time.
 		I. If you plan on not taking our suggestion, good luck. We are currently working on a fix and this known bug's documentation will be deleted once it is fixed.
-3. You cannot have an else statement and then an if statement inside of that else. We are working for a fix.
-	A: We suggest you make multiple if statements, instead of a makeshift "elif" statement.
-		I. If you do indeed make a fake "elif" statement, it will cause the program to crash. To "uncrash" it, press Control + c (not to be confused with Control + Shift + c).
 
 ## Updates
 
