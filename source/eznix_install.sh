@@ -13,4 +13,4 @@ echo "Command: ez"
 echo "Usage: ez <ez-file>\n"
 echo "Description: "
 echo "Uses the ez interpreter to run a .ez file.\n"
-echo "Install completed successfully."
+echo "Install completed successfully." # all done
