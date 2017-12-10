@@ -1,4 +1,4 @@
-with sauce.ez          ; try importing
+with all.ez            ; try importing
 set global to 82       ; global = 82
 show global            ; shows 82
 make my_func do        ; makes my_func a function
@@ -36,7 +36,6 @@ done                   ; finish while loop
 done                   ; finish statement 2
 done                   ; finish statement 1
 call in_file           ; calls the function made in the sauce file
-show file_var          ; shows the variable created inside the imported file
 set x to basket        ; new data structure that holds all kinds of data
 push 823 into x        ; you can push an integer into baskets
 push hi into x         ; you can push strings into baskets
@@ -45,3 +44,12 @@ set y to input         ; get input
 push y into x          ; you can even push variables into baskets
 show x                 ; show the basket as a whole
 show x[1]              ; or show a single element
+if global > 200        ; evaluates to false
+  show Shouldn't work  ; this portion of the code should not work
+done                   ; finish
+else                   ; should run
+  if global > 1        ; evaluates to true
+    show global        ; should show 82
+    show Bug fixed!    ; we did it!
+  done                 ; finish
+done                   ; finish

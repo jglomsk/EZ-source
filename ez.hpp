@@ -17,11 +17,16 @@
 #include <cctype>
 #include <cstring>
 #include "mere.hpp"
+#ifdef _WIN32
+	#define PLATFORM 1
+#else
+	#define PLATFORM 2
+#endif
 class Main {
 public:
 	std::vector<std::string> funcs; // need this for function keeping and file deleting at the end
 	bool tof;
-	int flush;
+	int flush = 0;
 	void end_n_del(std::vector<std::string> vals);
 	float pemdas(std::string thing);
 	void translate(const char* file, // the file itself
@@ -45,17 +50,36 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 						(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
 						(entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
 						(entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
-		else if (entire_file[i].find("done") != std::string::npos && nest > 0) {
+		else if (entire_file[i].find("done") != std::string::npos && nest > 0 &&
+						 entire_file[i].find("done") < comment_limit &&
+						 entire_file[i].find("done") < entire_file[i].find("show") &&
+						 entire_file[i].find("done") < entire_file[i].find("set") &&
+						 entire_file[i].find("done") < entire_file[i].find("if") &&
+						 entire_file[i].find("done") < entire_file[i].find("else") &&
+						 entire_file[i].find("done") < entire_file[i].find("push") &&
+						 entire_file[i].find("done") < entire_file[i].find("make") &&
+						 entire_file[i].find("done") < entire_file[i].find("with") &&
+						 entire_file[i].find("done") < entire_file[i].find("while") &&
+						 entire_file[i].find("done") < entire_file[i].find("call")) {
 			nest--;
 			do_me_hard << "done\n";
 		}
-		else if (entire_file[i].find("done") != std::string::npos && entire_file[i].find("done") < comment_limit && nest <= 0) break;
+		else if (entire_file[i].find("done") < comment_limit &&
+						 entire_file[i].find("done") < entire_file[i].find("show") &&
+						 entire_file[i].find("done") < entire_file[i].find("set") &&
+						 entire_file[i].find("done") < entire_file[i].find("if") &&
+						 entire_file[i].find("done") < entire_file[i].find("else") &&
+						 entire_file[i].find("done") < entire_file[i].find("push") &&
+						 entire_file[i].find("done") < entire_file[i].find("make") &&
+						 entire_file[i].find("done") < entire_file[i].find("with") &&
+						 entire_file[i].find("done") < entire_file[i].find("while") &&
+						 entire_file[i].find("done") < entire_file[i].find("call") && nest <= 0) break;
 		else if (i == newlinesnum) {
 			std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
 			std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
 			std::cout << "Error code: 60n3\n";
 			end_n_del(funcs);
-			endp(603);
+			endp(603, flush);
 		}
 		else if (j > entire_file[i].size()) {
 			i++;
@@ -451,7 +475,15 @@ void Main::translate(const char* file, // the file itself
 		if (entire_file[i].find(';') != std::string::npos) comment_limit = entire_file[i].find(';');
 		else comment_limit = entire_file[i].size();
 		// keyword with
-		if (entire_file[i].find("with") != std::string::npos && entire_file[i].find("with") < comment_limit) {
+		if (entire_file[i].find("with") != std::string::npos && entire_file[i].find("with") < comment_limit &&
+			 	entire_file[i].find("with") < entire_file[i].find("show") &&
+			 	entire_file[i].find("with") < entire_file[i].find("set") &&
+			 	entire_file[i].find("with") < entire_file[i].find("if") &&
+			 	entire_file[i].find("with") < entire_file[i].find("else") &&
+			 	entire_file[i].find("with") < entire_file[i].find("push") &&
+			 	entire_file[i].find("with") < entire_file[i].find("make") &&
+			 	entire_file[i].find("with") < entire_file[i].find("while") &&
+			 	entire_file[i].find("with") < entire_file[i].find("call")) {
 			int k = entire_file[i].find("with") + 4;
 			while (entire_file[i][k] == ' ') k++;
 			std::string fp_add = "";
@@ -463,13 +495,34 @@ void Main::translate(const char* file, // the file itself
 				if (fp_test) translate(fp_add.c_str(), variables, values, baskets, count);
 				else throw 107;
 			} catch (...) {
-				std::cout << "Import Error.\nCheck your import file and make sure you typed the correct file name.\n";
-				end_n_del(funcs);
-				endp(107);
+				try {
+					std::string fp_copy = "";
+					if (PLATFORM == 1) {
+						fp_copy = std::string("\"C:\\Program Files\\EZ\\") + fp_add + std::string("\"");
+					}
+					else if (PLATFORM == 2) {
+						fp_copy = std::string("/usr/share/ez/") + fp_add;
+					}
+					std::ifstream fp_test(fp_copy.c_str());
+					if (fp_test) translate(fp_copy.c_str(), variables, values, baskets, count);
+					else throw 107;
+				} catch (...) {
+					std::cout << "Import Error.\nCheck your import file and make sure you typed the correct file name.\n";
+					end_n_del(funcs);
+					endp(107, flush);
+				}
 			}
 		}
 		// keyword if
-		else if (entire_file[i].find("if") != std::string::npos && entire_file[i].find("if") < comment_limit) {
+		else if (entire_file[i].find("if") != std::string::npos && entire_file[i].find("if") < comment_limit &&
+			  entire_file[i].find("if") < entire_file[i].find("show") &&
+			 	entire_file[i].find("if") < entire_file[i].find("set") &&
+			 	entire_file[i].find("if") < entire_file[i].find("else") &&
+			 	entire_file[i].find("if") < entire_file[i].find("push") &&
+			 	entire_file[i].find("if") < entire_file[i].find("while") &&
+			 	entire_file[i].find("if") < entire_file[i].find("call") &&
+			 	entire_file[i].find("if") < entire_file[i].find("make") &&
+			 	entire_file[i].find("if") < entire_file[i].find("with")) {
 			int k = entire_file[i].find("if") + 2;
 			while (entire_file[i][k] == ' ') k++;
 			std::string condition1 = "";
@@ -509,7 +562,7 @@ void Main::translate(const char* file, // the file itself
 						std::cout << "You failed to specify valid variables in the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: g3n4rg\n";
 						end_n_del(funcs);
-						endp(34);
+						endp(34, flush);
 					}
 					else {
 						if (cond_sign == '>') tof = (std::atoi(values[a].c_str()) > std::atoi(values[b].c_str()));
@@ -528,7 +581,7 @@ void Main::translate(const char* file, // the file itself
 						std::cout << "You failed to specify a valid variable for the first half of the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: 14rg\n";
 						end_n_del(funcs);
-						endp(14);
+						endp(14, flush);
 					}
 					else {
 						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) > std::atoi(condition2.c_str()));
@@ -547,7 +600,7 @@ void Main::translate(const char* file, // the file itself
 						std::cout << "You failed to specify a valid variable for the second half of the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: 24rg\n";
 						end_n_del(funcs);
-						endp(24);
+						endp(24, flush);
 					}
 					else {
 						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) < std::atoi(condition1.c_str()));
@@ -565,7 +618,7 @@ void Main::translate(const char* file, // the file itself
 							std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
 							std::cout << "Error code: 60n3\n";
 							end_n_del(funcs);
-							endp(603);
+							endp(603, flush);
 						}
 						else if (j > entire_file[i].size()) {
 							i++;
@@ -576,11 +629,30 @@ void Main::translate(const char* file, // the file itself
 										 (entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
 										 (entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
 										 (entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
-						else if (entire_file[i].find("done") != std::string::npos && nest > 0) {
+						else if (entire_file[i].find("done") != std::string::npos && nest > 0 &&
+										 entire_file[i].find("done") < comment_limit &&
+										 entire_file[i].find("done") < entire_file[i].find("show") &&
+										 entire_file[i].find("done") < entire_file[i].find("set") &&
+										 entire_file[i].find("done") < entire_file[i].find("if") &&
+										 entire_file[i].find("done") < entire_file[i].find("else") &&
+										 entire_file[i].find("done") < entire_file[i].find("push") &&
+										 entire_file[i].find("done") < entire_file[i].find("make") &&
+										 entire_file[i].find("done") < entire_file[i].find("with") &&
+										 entire_file[i].find("done") < entire_file[i].find("while") &&
+										 entire_file[i].find("done") < entire_file[i].find("call")) {
 							nest--;
 							do_me_hard << "done\n";
 						}
-						else if (entire_file[i].find("done") != std::string::npos && entire_file[i].find("done") < comment_limit) break;
+						else if (entire_file[i].find("done") < comment_limit &&
+										 entire_file[i].find("done") < entire_file[i].find("show") &&
+										 entire_file[i].find("done") < entire_file[i].find("set") &&
+										 entire_file[i].find("done") < entire_file[i].find("if") &&
+										 entire_file[i].find("done") < entire_file[i].find("else") &&
+										 entire_file[i].find("done") < entire_file[i].find("push") &&
+										 entire_file[i].find("done") < entire_file[i].find("make") &&
+										 entire_file[i].find("done") < entire_file[i].find("with") &&
+										 entire_file[i].find("done") < entire_file[i].find("while") &&
+										 entire_file[i].find("done") < entire_file[i].find("call")) break;
 						char put_me_in_coach = entire_file[i][j - 1];
 						do_me_hard << put_me_in_coach;
 					}
@@ -596,12 +668,19 @@ void Main::translate(const char* file, // the file itself
 				std::cout << "You did not specify a conditional character on line " << problem << ".\nThe program will now exit.";
 				std::cout << "Error code: c0n651gn\n";
 				end_n_del(funcs);
-				endp(651);
+				endp(651, flush);
 			}
 		}
 		// keyword else
-		else if (entire_file[i].find("else") != std::string::npos && entire_file[i - 1].find("done") != std::string::npos &&
-						 entire_file[i].find("else") < comment_limit) {
+		else if (entire_file[i].find("else") != std::string::npos && entire_file[i].find("else") < comment_limit &&
+						entire_file[i].find("else") < entire_file[i].find("show") &&
+						entire_file[i].find("else") < entire_file[i].find("set") &&
+						entire_file[i].find("else") < entire_file[i].find("if") &&
+						entire_file[i].find("else") < entire_file[i].find("push") &&
+						entire_file[i].find("else") < entire_file[i].find("while") &&
+						entire_file[i].find("else") < entire_file[i].find("call") &&
+						entire_file[i].find("else") < entire_file[i].find("make") &&
+						entire_file[i].find("else") < entire_file[i].find("with")) {
 			if (!tof) {
 				int k = entire_file[i].find("else") + 4;
 				std::ofstream else_file;
@@ -617,11 +696,30 @@ void Main::translate(const char* file, // the file itself
 									(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
 									(entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
 									(entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
-					else if (entire_file[i].find("done") != std::string::npos && nest > 0) {
+					else if (entire_file[i].find("done") != std::string::npos && nest > 0 &&
+									 entire_file[i].find("done") < comment_limit &&
+									 entire_file[i].find("done") < entire_file[i].find("show") &&
+									 entire_file[i].find("done") < entire_file[i].find("set") &&
+									 entire_file[i].find("done") < entire_file[i].find("if") &&
+									 entire_file[i].find("done") < entire_file[i].find("else") &&
+									 entire_file[i].find("done") < entire_file[i].find("push") &&
+									 entire_file[i].find("done") < entire_file[i].find("make") &&
+									 entire_file[i].find("done") < entire_file[i].find("with") &&
+									 entire_file[i].find("done") < entire_file[i].find("while") &&
+									 entire_file[i].find("done") < entire_file[i].find("call")) {
 						nest--;
 						else_file << "done\n";
 					}
-					else if (entire_file[i].find("done") != std::string::npos) break;
+					else if (entire_file[i].find("done") < comment_limit &&
+									 entire_file[i].find("done") < entire_file[i].find("show") &&
+									 entire_file[i].find("done") < entire_file[i].find("set") &&
+									 entire_file[i].find("done") < entire_file[i].find("if") &&
+									 entire_file[i].find("done") < entire_file[i].find("else") &&
+									 entire_file[i].find("done") < entire_file[i].find("push") &&
+									 entire_file[i].find("done") < entire_file[i].find("make") &&
+									 entire_file[i].find("done") < entire_file[i].find("with") &&
+									 entire_file[i].find("done") < entire_file[i].find("while") &&
+									 entire_file[i].find("done") < entire_file[i].find("call")) break;
 					char put_me_in_coach = entire_file[i][j - 1];
 					else_file << put_me_in_coach;
 				}
@@ -634,7 +732,15 @@ void Main::translate(const char* file, // the file itself
 			}
 		}
 		// keyword push
-		else if (entire_file[i].find("push") != std::string::npos && entire_file[i].find("push") < comment_limit) {
+		else if (entire_file[i].find("push") != std::string::npos && entire_file[i].find("push") < comment_limit &&
+						entire_file[i].find("push") < entire_file[i].find("show") &&
+						entire_file[i].find("push") < entire_file[i].find("set") &&
+						entire_file[i].find("push") < entire_file[i].find("if") &&
+						entire_file[i].find("push") < entire_file[i].find("else") &&
+						entire_file[i].find("push") < entire_file[i].find("while") &&
+						entire_file[i].find("push") < entire_file[i].find("call") &&
+						entire_file[i].find("push") < entire_file[i].find("make") &&
+						entire_file[i].find("push") < entire_file[i].find("with")) {
 			int k = entire_file[i].find("push") + 4;
 			while (entire_file[i][k] == ' ') k++;
 			std::string thing = "";
@@ -649,7 +755,7 @@ void Main::translate(const char* file, // the file itself
 				std::cout << "The program will now exit.\n";
 				std::cout << "Error code: 1n70\n";
 				end_n_del(funcs);
-				endp(170);
+				endp(170, flush);
 			}
 			while (entire_file[i][k] == ' ') k++;
 			for (; entire_file[i][k] != ' ' && entire_file[i][k] != '\0' && k < comment_limit; k++) {
@@ -681,7 +787,15 @@ void Main::translate(const char* file, // the file itself
 			}
 		}
 		// keyword while
-		else if (entire_file[i].find("while") != std::string::npos && entire_file[i].find("while") < comment_limit) {
+		else if (entire_file[i].find("while") != std::string::npos && entire_file[i].find("while") < comment_limit &&
+						entire_file[i].find("while") < entire_file[i].find("show") &&
+						entire_file[i].find("while") < entire_file[i].find("set") &&
+						entire_file[i].find("while") < entire_file[i].find("if") &&
+						entire_file[i].find("while") < entire_file[i].find("else") &&
+						entire_file[i].find("while") < entire_file[i].find("push") &&
+						entire_file[i].find("while") < entire_file[i].find("call") &&
+						entire_file[i].find("while") < entire_file[i].find("make") &&
+						entire_file[i].find("while") < entire_file[i].find("with")) {
 			int k = entire_file[i].find("while") + 5;
 			std::string thing = "";
 			int beg = 0;
@@ -728,7 +842,7 @@ void Main::translate(const char* file, // the file itself
 						std::cout << "You failed to specify valid variables in the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: g3n4rg\n";
 						end_n_del(funcs);
-						endp(34);
+						endp(34, flush);
 					}
 					else {
 						if (cond_sign == '>') tof = (std::atoi(values[a].c_str()) > std::atoi(values[b].c_str()));
@@ -750,7 +864,7 @@ void Main::translate(const char* file, // the file itself
 						std::cout << "You failed to specify a valid variable for the first half of the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: 14rg\n";
 						end_n_del(funcs);
-						endp(14);
+						endp(14, flush);
 					}
 					else {
 						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) > std::atoi(condition2.c_str()));
@@ -773,7 +887,7 @@ void Main::translate(const char* file, // the file itself
 						std::cout << "You failed to specify a valid variable for the second half of the conditional on line " << problem << ".\n";
 						std::cout << "The program will now exit.\nError code: 24rg\n";
 						end_n_del(funcs);
-						endp(24);
+						endp(24, flush);
 					}
 					else {
 						if (cond_sign == '>') tof = (std::atoi(values[j].c_str()) < std::atoi(condition1.c_str()));
@@ -793,7 +907,15 @@ void Main::translate(const char* file, // the file itself
 			}
 		}
 		// keyword make
-		else if (entire_file[i].find("make") != std::string::npos && entire_file[i].find("make") < comment_limit) {
+		else if (entire_file[i].find("make") != std::string::npos && entire_file[i].find("make") < comment_limit &&
+						entire_file[i].find("make") < entire_file[i].find("show") &&
+						entire_file[i].find("make") < entire_file[i].find("set") &&
+						entire_file[i].find("make") < entire_file[i].find("if") &&
+						entire_file[i].find("make") < entire_file[i].find("else") &&
+						entire_file[i].find("make") < entire_file[i].find("push") &&
+						entire_file[i].find("make") < entire_file[i].find("while") &&
+						entire_file[i].find("make") < entire_file[i].find("call") &&
+						entire_file[i].find("make") < entire_file[i].find("with")) {
 			int k = entire_file[i].find("make") + 4;
 			while (entire_file[i][k] == ' ') k++;
 			std::string func_name = "";
@@ -811,14 +933,14 @@ void Main::translate(const char* file, // the file itself
 					std::cout << "The failed function started on line " << problem << ". The program will now exit.\n";
 					std::cout << "Error code: 60n3\n";
 					end_n_del(funcs);
-					endp(603);
+					endp(603, flush);
 				}
 				else if (entire_file[i].find("call " + func_name) != std::string::npos) {
 					std::cout << "You called a function before you finished making it on line " << problem << ".\n";
 					std::cout << "The program will now exit.\n";
 					std::cout << "Error code: c411d0n3\n";
 					end_n_del(funcs);
-					endp(41103);
+					endp(41103, flush);
 				}
 				else if (j > entire_file[i].size()) {
 					i++;
@@ -829,18 +951,45 @@ void Main::translate(const char* file, // the file itself
 								(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
 								(entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
 								(entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
-				else if (entire_file[i].find("done") != std::string::npos && nest > 0) {
+				else if (entire_file[i].find("done") != std::string::npos && nest > 0 &&
+								 entire_file[i].find("done") < comment_limit &&
+								 entire_file[i].find("done") < entire_file[i].find("show") &&
+								 entire_file[i].find("done") < entire_file[i].find("set") &&
+								 entire_file[i].find("done") < entire_file[i].find("if") &&
+								 entire_file[i].find("done") < entire_file[i].find("else") &&
+								 entire_file[i].find("done") < entire_file[i].find("push") &&
+								 entire_file[i].find("done") < entire_file[i].find("make") &&
+								 entire_file[i].find("done") < entire_file[i].find("with") &&
+								 entire_file[i].find("done") < entire_file[i].find("while") &&
+								 entire_file[i].find("done") < entire_file[i].find("call")) {
 					nest--;
 					func_file << "done\n";
 				}
-				else if (entire_file[i].find("done") != std::string::npos) break;
+				else if (entire_file[i].find("done") < comment_limit &&
+								 entire_file[i].find("done") < entire_file[i].find("show") &&
+								 entire_file[i].find("done") < entire_file[i].find("set") &&
+								 entire_file[i].find("done") < entire_file[i].find("if") &&
+								 entire_file[i].find("done") < entire_file[i].find("else") &&
+								 entire_file[i].find("done") < entire_file[i].find("push") &&
+								 entire_file[i].find("done") < entire_file[i].find("make") &&
+								 entire_file[i].find("done") < entire_file[i].find("with") &&
+								 entire_file[i].find("done") < entire_file[i].find("while") &&
+								 entire_file[i].find("done") < entire_file[i].find("call")) break;
 				char put_me_in_coach = entire_file[i][j - 1];
 				func_file << put_me_in_coach;
 			}
 			func_file.close();
 		}
 		// keyword call
-		else if (entire_file[i].find("call") != std::string::npos && entire_file[i].find("call") < comment_limit) {
+		else if (entire_file[i].find("call") != std::string::npos && entire_file[i].find("call") < comment_limit &&
+						entire_file[i].find("call") < entire_file[i].find("show") &&
+						entire_file[i].find("call") < entire_file[i].find("set") &&
+						entire_file[i].find("call") < entire_file[i].find("if") &&
+						entire_file[i].find("call") < entire_file[i].find("else") &&
+						entire_file[i].find("call") < entire_file[i].find("push") &&
+						entire_file[i].find("call") < entire_file[i].find("make") &&
+						entire_file[i].find("call") < entire_file[i].find("while") &&
+						entire_file[i].find("call") < entire_file[i].find("with")) {
 			int k = entire_file[i].find("call") + 4;
 			int stop_here = 0;
 			if (entire_file[i].find(';') != std::string::npos) stop_here = entire_file[i].find(';');
@@ -855,7 +1004,7 @@ void Main::translate(const char* file, // the file itself
 					std::cout << "You failed to call a specific function on line " << problem << ". The program will now exit.\n";
 					std::cout << "Error code: c411614nk\n";
 					end_n_del(funcs);
-					endp(411614);
+					endp(411614, flush);
 				}
 				if (funcs[j] == call_name) {
 					std::vector<std::string> varTemp = variables;
@@ -865,7 +1014,15 @@ void Main::translate(const char* file, // the file itself
 			}
 		}
 		// keyword show
-		else if (entire_file[i].find("show") != std::string::npos && entire_file[i].find("show") < comment_limit) {
+		else if (entire_file[i].find("show") != std::string::npos && entire_file[i].find("show") < comment_limit &&
+						entire_file[i].find("show") < entire_file[i].find("set") &&
+						entire_file[i].find("show") < entire_file[i].find("if") &&
+						entire_file[i].find("show") < entire_file[i].find("else") &&
+						entire_file[i].find("show") < entire_file[i].find("push") &&
+						entire_file[i].find("show") < entire_file[i].find("call") &&
+						entire_file[i].find("show") < entire_file[i].find("make") &&
+						entire_file[i].find("show") < entire_file[i].find("while") &&
+						entire_file[i].find("show") < entire_file[i].find("with")) {
 			int k = entire_file[i].find("show") + 4;
 			int stop_here = 0;
 			if (entire_file[i].find(';') != std::string::npos) stop_here = entire_file[i].find(';');
@@ -931,7 +1088,6 @@ void Main::translate(const char* file, // the file itself
 								}
 								std::cout << '\n';
 								break;
-								break;
 							}
 						}
 						else if (p < count - 1) {}
@@ -946,7 +1102,15 @@ void Main::translate(const char* file, // the file itself
 			}
 		}
 		// keyword set
-		else if (entire_file[i].find("set") != std::string::npos && entire_file[i].find("set") < comment_limit) {
+		else if (entire_file[i].find("set") != std::string::npos && entire_file[i].find("set") < comment_limit &&
+						entire_file[i].find("set") < entire_file[i].find("show") &&
+						entire_file[i].find("set") < entire_file[i].find("if") &&
+						entire_file[i].find("set") < entire_file[i].find("else") &&
+						entire_file[i].find("set") < entire_file[i].find("push") &&
+						entire_file[i].find("set") < entire_file[i].find("call") &&
+						entire_file[i].find("set") < entire_file[i].find("make") &&
+						entire_file[i].find("set") < entire_file[i].find("while") &&
+						entire_file[i].find("set") < entire_file[i].find("with")) {
 			try {
 				int k = entire_file[i].find("set") + 3;
 				int stop_here = 0;
@@ -1031,7 +1195,7 @@ void Main::translate(const char* file, // the file itself
 				std::cout << "The program will now exit.\n";
 				std::cout << "Error code: " << e << std::endl;
 				end_n_del(funcs);
-				endp(e);
+				endp(e, flush);
 			}
 		}
 	}

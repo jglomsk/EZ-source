@@ -1,0 +1,27 @@
+make help do
+show The word show will show you whatever comes after that word.
+show The word set will set a variable to whatever comes after the word to (e.g. set x to 42).
+show If you set a variable, you can then show it's value with show and then the variable name (e.g. show x).
+show If you want to set a variable to a formula, you can! Just do set var_name to formula (where var_name is the name of the variable and formula could be something like 42 + 90).
+show If you want to show a variable that was set to a formula, just show it!
+show Comments can be done with a simple semicolon (;).
+show Functions are supported in this version and can be made with a certain syntax (make func_name do stuff stuff stuff done).
+show The keyword make is used to begin a function. The keyword do starts the function. The keyword done ends it.
+show The keyword call allows you to call the function you made (e.g. make the function do whatever is inside).
+show The keyword if is a conditional statement. If your conditional is true, everything inside will execute. The keyword done ends the statement.
+show The keyword else will execute if your conditional is false. The keyword done ends the statement.
+show The keyword while will execute whatever is inside while your conditional is true.
+show Don't worry about incrementing or decrementing, we already took care of that for you.
+show The keyword done means you're ready for your loop to be done and do it's thing.
+show The keyword input inside a setting of a variable means you take input and set it to that variable (e.g. set x to input).
+show Want a set of things? With EZ's new basket, it's EZr than ever.
+show Simply set a variable to a basket (e.g. set x to basket).
+show Then, push something into it (e.g. push 82 into x).
+show Show off that basket with a show keyword (e.g. show x), or show off a single element (e.g. show x[1]).
+show Elements in baskets start at 0, and go up by one (e.g. x[0] will equal the first thing you push into x, x[1] will be the second).
+show Showing a variable inside of a formula is not supported in this version of EZ (e.g. show x + 2).
+show One line if else statements are not supported in this version of EZ (e.g. if x > 1 stuff done else stuff done).
+show Out of order formulas are not supported in this version of EZ (e.g. 2*3^5 is not supported, but (2*3)^5 and 2*(3^5) are supported).
+show Out of order formula setting to variables is not supported in this version of EZ.
+show Setting while loops to check for words is not supported in this version of EZ (e.g. while x ! yes).
+done
