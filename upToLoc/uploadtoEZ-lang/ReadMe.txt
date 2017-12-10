@@ -3,13 +3,8 @@
 Intro.........................Line 9
 Keywords......................Line 19
 Running.......................Line 47
-<<<<<<< HEAD:ReadMe.txt
 Known Bugs....................Line 81
 Updates.......................Line 91
-=======
-Known Bugs....................Line 80
-Updates.......................Line 90
->>>>>>> e04824d0289d554b00d6ab002b4d05b70e21d8c0:upToLoc/uploadtoEZ-lang/ReadMe.txt
 
 ## Introduction
 

@@ -3,8 +3,8 @@
 Intro.........................Line 9
 Keywords......................Line 19
 Running.......................Line 47
-Known Bugs....................Line 80
-Updates.......................Line 90
+Known Bugs....................Line 81
+Updates.......................Line 91
 
 ## Introduction
 
@@ -49,7 +49,8 @@ Setting while loops to check for words is not supported in this version of EZ (e
 In order to create and use your program, you're going to need (for alternative, go to line 68):
 1: The interpreter that you should have downloaded.
 	A: For Windows users: ez.exe
-	B: For Mac/Linux users: ez.out
+	B: For Linux users: ez.out
+	C: For Mac users: ez.mac
 2: A command window.
 	A: For Windows users: a command prompt window.
 	B: For Mac/Linux users: a terminal window.
@@ -73,7 +74,7 @@ Alternative interpreting method:
 Another alternative (FOR MAC/LINUX ONLY):
 1: Open a terminal (Mac: Command + Space, then search "Terminal"; Linux people should know how to do this).
 2: Change to the directory you extracted the files to (should be like ~/Downloads/EZ-lang). Use the cd command to do this (e.g. cd ~/Downloads/EZ-lang) and then press Enter.
-3: Type the following command then press Enter: sudo sh eznix_install.sh
+3: Type the following command then press Enter: sudo bash eznix_install.bash
 	A: WARNING!!! This command will ask for an admin password. If you are not an admin, simply do not use this method. Instead, use the original method or the first alternative.
 4: Now you can change directory to wherever you want and simply type "ez <ez_file.ez>" replacing <ez_file.ez> with the name of your ez file, followed by the Enter key. Do not include the carets (<>) in the name.
 
