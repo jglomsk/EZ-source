@@ -1,18 +1,17 @@
 Welcome to the dev team! We are happy to have you here!
 EZ is a new language that is build entirely in C++, is interpreted, and has everything from output to data structures.
-Note that we edit the EZ language on a website called codeanywhere.com, of which you may have heard of.
 If you want to join us in editing today, go ahead and email realezlang@gmail.com
-You will need an account to edit on Codeanywhere. Getting an account is simple and requires an email account.
-We have given a set of commands to make your life easier:
+You can join us easily through an ssh connection to: ez-lang@72.240.172.89
+The password is: EZisthebest
+We have a couple commands already set up. They are below.
 
-Helper = What it does
----------------------
-runOut = Compiles and runs the program for a Mac/Linux environment for 32 bit (which will also run on 64 bit).
-runWin = Compiles and runs the program in a windows environment for 32 bit (which will also run on 64 bit).
-debugr = Compiles and runs gdb for the program, of which you can run line by line. Type this into a terminal for more on debugging: man gdb
-runWeb = Compiles and runs the program for our website version (of which isn't too different from the linux version).
-updatr = Updates the system that our server is on. Simply grabs updates and installs them.
-cmpltr = Compiles every version of the program, then copies those finished files to the upload folder. Afterwards, runs the commands in updatr.
+Command = What it does.
+<<<<<<<=>>>>>>>>>>>>>>
+cmplMac = Compiles the Mac version. NOTE: THIS SERVER IS ON UBUNTU! You cannot run the mac version on the server.
+cmplWin = Compiles the Windows version. Run the new file by entering the ~/EZ-source/source directory then typing: wineconsole --backend=curses "ez.exe" "example.ez"
+cmplLin = Compiles the Linux version. Run the new file by entering the ~/EZ-source/source directory then typing: ./ez.out example.ez
+cmplAll = Compiles all of the versions.
+updater = Updates the system that our server is on. Simply grabs updates and installs them.
 
 Note that you must be on the list of contributors in order to commit to git.
 If you are not on that list, simply request access by emailing realezlang@gmail.com

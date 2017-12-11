@@ -17,17 +17,21 @@
 #include <cctype>
 #include <cstring>
 #include <cstdio>
+#include <sstream>
 #include "mere.hpp"
 #ifdef _WIN32
 	#define PLATFORM 1
 #else
 	#define PLATFORM 2
 #endif
+#define to_string( x ) static_cast< std::ostringstream & >( \
+		        ( std::ostringstream() << std::dec << x ) ).str()
 class Main {
 public:
+	Main();
 	std::vector<std::string> funcs; // need this for function keeping and file deleting at the end
 	bool tof;
-	int flush = 0;
+	int flush;
 	int line_count;
 	void end_n_del(std::vector<std::string> vals, int line_count = 100);
 	float pemdas(std::string thing);
@@ -46,7 +50,7 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 {
 	int nest = 0;
 	std::ofstream do_me_hard;
-	do_me_hard.open("conditional" + std::to_string(problem));
+	do_me_hard.open(std::string("conditional" + to_string(problem)).c_str());
 	for (int j = k + 1;; j++) {
 		if ((entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
 						(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
@@ -95,29 +99,36 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 	if (beg > end) while (beg > end) {
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x > 8
-				values[p] = std::to_string(beg--);
-				if (beg > end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i);
+				values[p] = to_string(beg--);
+				if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg--;
-				if (beg > end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i);
+				if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i);
 			}
 		}
 	}
 	else if (beg < end) while (beg < end) {
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x < 8
-				values[p] = std::to_string(beg++);
-				if (beg < end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i);
+				values[p] = to_string(beg++);
+				if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg++;
-				if (beg < end) translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i);
+				if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i);
 			}
 		}
 	}
+}
+// Sets up all the values
+Main::Main()
+{
+	flush = 0;
+	tof = false;
+	line_count = 0;
 }
 // deletes the function files
 void Main::end_n_del(std::vector<std::string> values, int lines)
@@ -126,9 +137,9 @@ void Main::end_n_del(std::vector<std::string> values, int lines)
 		remove(values[i].c_str());
 	}
 	for (int i = 0; i < lines; i++) {
-		remove(std::string("else" + std::to_string(i)).c_str());
-		remove(std::string("if" + std::to_string(i)).c_str());
-		remove(std::string("while" + std::to_string(i)).c_str());
+		remove(std::string("else" + to_string(i)).c_str());
+		remove(std::string("if" + to_string(i)).c_str());
+		remove(std::string("while" + to_string(i)).c_str());
 	}
 }
 // turns a string equation into a real float
@@ -619,7 +630,7 @@ void Main::translate(const char* file, // the file itself
 				}
 				if (tof) {
 					std::ofstream do_me_hard;
-					do_me_hard.open("conditional" + std::to_string(problem));
+					do_me_hard.open(std::string("conditional" + to_string(problem)).c_str());
 					for (int j = k + 1;; j++) {
 						if (i == newlinesnum) {
 							std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
@@ -665,8 +676,8 @@ void Main::translate(const char* file, // the file itself
 						do_me_hard << put_me_in_coach;
 					}
 					do_me_hard.close();
-					translate(std::string("conditional" + std::to_string(problem)).c_str(), variables, values, baskets, count, i, false, nest);
-					remove(std::string("conditional" + std::to_string(problem)).c_str());
+					translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i, false, nest);
+					remove(std::string("conditional" + to_string(problem)).c_str());
 				}
 				else {
 					while (entire_file[i].find("done") == std::string::npos) i++;
@@ -692,7 +703,7 @@ void Main::translate(const char* file, // the file itself
 			if (!tof) {
 				int k = entire_file[i].find("else") + 4;
 				std::ofstream else_file;
-				const char* else_f = std::string("else" + std::to_string(problem)).c_str();
+				const char* else_f = std::string("else" + to_string(problem)).c_str();
 				else_file.open(else_f);
 				for (int j = k + 1;; j++) {
 					if (j > entire_file[i].size()) {
@@ -911,7 +922,7 @@ void Main::translate(const char* file, // the file itself
 			}
 			if (tof) {
 				while_loop_guts(beg, end, newlinesnum, variables, values, baskets, k, i, count, problem, im_this, entire_file, thing, comment_limit);
-				remove(std::string("conditional" + std::to_string(problem)).c_str());
+				remove(std::string("conditional" + to_string(problem)).c_str());
 			}
 		}
 		// keyword make
@@ -931,7 +942,7 @@ void Main::translate(const char* file, // the file itself
 				func_name += entire_file[i].at(k);
 			}
 			std::ofstream func_file;
-			func_file.open(func_name);
+			func_file.open(func_name.c_str());
 			funcs.push_back(func_name);
 			if (entire_file[i][k] == '\0') i++;
 			else while (entire_file[i][k] == ' ' || entire_file[i][k] == 'd' || entire_file[i][k] == 'o') k++;
@@ -1153,7 +1164,7 @@ void Main::translate(const char* file, // the file itself
 							for (int a = copy_k; a < stop_here; a++) {
 								thing += entire_file[i][a];
 							}
-							values[j] = std::to_string(pemdas(thing));
+							values[j] = to_string(pemdas(thing));
 						}
 						else {
 							if (copy_k < stop_here) {
@@ -1178,7 +1189,7 @@ void Main::translate(const char* file, // the file itself
 							for (int a = copy_k; a < stop_here; a++) {
 								thing += entire_file[i][a];
 							}
-							values[count] = std::to_string(pemdas(thing));
+							values[count] = to_string(pemdas(thing));
 						}
 						else {
 							if (copy_k < stop_here) {
