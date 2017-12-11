@@ -508,6 +508,7 @@ void Main::translate(const char* file, // the file itself
 						fp_copy = std::string("\"C:\\Program Files\\EZ\\") + fp_add + std::string("\"");
 					}
 					else if (PLATFORM == 2) {
+						fp_copy = std::string("/usr/share/ez/") + fp_add;
 						fp_copy = std::string("/usr/local/share/ez/") + fp_add;
 					}
 					std::ifstream fp_test(fp_copy.c_str());
@@ -1102,7 +1103,6 @@ void Main::translate(const char* file, // the file itself
 									std::cout << entire_file[i][b];
 								}
 								std::cout << '\n';
-								break;
 								break;
 							}
 						}
