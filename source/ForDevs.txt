@@ -3,6 +3,8 @@ EZ is a new language that is build entirely in C++, is interpreted, and has ever
 If you want to join us in editing today, go ahead and email realezlang@gmail.com
 You can join us easily through an ssh connection to: ez-lang@72.240.172.89
 The password is: EZisthebest
+Or you could always just join us on codeanywhere.com
+You'll need an account and you will need to email realezlang@gmail.com for access to the project.
 We have a couple commands already set up. They are below.
 
 Command = What it does.
