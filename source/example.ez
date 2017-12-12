@@ -1,55 +1,54 @@
-with all.ez            ; try importing
-set global to 82       ; global = 82
-show global            ; shows 82
-make my_func do        ; makes my_func a function
-show global            ; shows 82 (global version)
-show 90 + 34           ; shows 124
-set global to 73       ; sets a local value to the global variable
-show Type anything     ; warn the user
-set local to input     ; local = input from user
-show global            ; shows the local value of global variable,
-                       ; but shows the global value if no local value is set
-if local > 22          ; super secret
-show Found me! I was:  ; secrety secret
-show local             ; show the secret value
-show But also above 22 ; ruin the fun
-done                   ; finish secret
-done                   ; finishes my_func
-call my_func           ; does everything inside of my_func
-show global            ; shows 82, as that is the global value
-show local             ; shows the word local, as local is inside a function
-if 83 > global         ; if statement means if it's true it executes the inside code
-show this works!       ; executes this if the statement evaluates to true
-done                   ; end the if statement
-else                   ; only executes when the if statement fails
-show food broke        ; lol meme is funny
-done                   ; finish the else statement
-while global < 92      ; executes while the conditional is true
-show global            ; shows where global is at
-done                   ; finishes and restarts the loop
-show Reverse now y'all ; warn the user
-if global > 50         ; if statement 1
-if global > 81         ; nested if statement 2
-while global > 81      ; nested while loop
-show global            ; only shows if both statements are true
-done                   ; finish while loop
-done                   ; finish statement 2
-done                   ; finish statement 1
-call in_file           ; calls the function made in the sauce file
-set x to basket        ; new data structure that holds all kinds of data
-push 823 into x        ; you can push an integer into baskets
-push hi into x         ; you can push strings into baskets
-show Type anything     ; warn the user
-set y to input         ; get input
-push y into x          ; you can even push variables into baskets
-show x                 ; show the basket as a whole
-show x[1]              ; or show a single element
-if global > 200        ; evaluates to false
-  show Shouldn't work  ; this portion of the code should not work
-done                   ; finish
-else                   ; should run
-  if global > 1        ; evaluates to true
-    show global        ; should show 82
-    show Bug fixed!    ; we did it!
-  done                 ; finish
-done                   ; finish
+with all.ez                  ; try importing
+set global to 82             ; global = 82
+show global                  ; shows 82
+make my_func do              ; makes my_func a function
+  show global                ; shows 82 (global version)
+  show 90 + 34               ; shows 124
+  set global to 73           ; sets a local value to the global variable
+  show Type anything         ; warn the user
+  set local to input         ; local = input from user
+  show global                ; shows the local value of global variable,
+                             ; but shows the global value if no local value is set
+  if local > 22              ; super secret
+    show Found me! I was:    ; secrety secret
+    show local               ; show the secret value
+    show But also above 22   ; ruin the fun
+  done                       ; finish secret
+done                         ; finishes my_func
+call my_func                 ; does everything inside of my_func
+show global                  ; shows 82, as that is the global value
+show local                   ; shows the word local, as local is inside a function
+if 83 > global               ; if statement means if it's true it executes the inside code
+  show this works!           ; executes this if the statement evaluates to true
+done                         ; end the if statement
+else                         ; only executes when the if statement fails
+  show food broke            ; lol meme is funny
+done                         ; finish the else statement
+while global < 92            ; executes while the conditional is true
+  show global                ; shows where global is at
+done                         ; finishes and restarts the loop
+show Reverse now y'all       ; warn the user
+if global > 50               ; if statement 1
+  if global > 81             ; nested if statement 2
+    while global > 81        ; nested while loop
+      show global            ; only shows if both statements are true
+    done                     ; finish while loop
+  done                       ; finish statement 2
+done                         ; finish statement 1
+call in_file                 ; calls the function made in the sauce file
+set x to basket              ; new data structure that holds all kinds of data
+push 823 into x              ; you can push an integer into baskets
+push hi into x               ; you can push strings into baskets
+show Type anything           ; warn the user
+set y to input               ; get input
+push y into x                ; you can even push variables into baskets
+show x                       ; show the basket as a whole
+show x[1]                    ; or show a single element
+if global > 200              ; evaluates to false
+  show Shouldn't work        ; this portion of the code should not work
+done                         ; finish
+else if global > 1           ; evaluates to true
+    show global              ; should show 82
+    show Bug fixed!          ; we did it!
+  done                       ; finish
+done                         ; finish

@@ -22,7 +22,7 @@ sudo rm -rf ezwin_install.exe
 sudo rm -rf ez.exe
 read -n1 -p "Would you like to delete the original interpreter? [y,n]: " y_or_n;
 if [ "$y_or_n" = "y" ]; then
-	if [ __linux__ ]; then
+	if [ "$(uname)" == "Linux" ]; then
 		sudo rm -rf ez.out
 	else
 		sudo rm -rf ez.mac

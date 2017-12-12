@@ -1,4 +1,4 @@
-make in_file do                  ; make a function too if you want
-show I'm in a function!          ; yes you are
-show I can be repeated whenever! ; yes you can
-done                             ; finish the function started on line 3
+make in_file do                    ; make a function too if you want
+  show I'm in a function!          ; yes you are
+  show I can be repeated whenever! ; yes you can
+done                               ; finish the function started on line 3
