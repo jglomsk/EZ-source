@@ -8,12 +8,18 @@ You'll need an account and you will need to email realezlang@gmail.com for acces
 We have a couple commands already set up. They are below.
 
 Command = What it does.
-<<<<<<<=>>>>>>>>>>>>>>
-cmplMac = Compiles the Mac version. NOTE: THIS SERVER IS ON UBUNTU! You cannot run the mac version on the server.
-cmplWin = Compiles the Windows version. Run the new file by entering the ~/EZ-source/source directory then typing: wineconsole --backend=curses "ez.exe" "example.ez"
-cmplLin = Compiles the Linux version. Run the new file by entering the ~/EZ-source/source directory then typing: ./ez.out example.ez
-cmplAll = Compiles all of the versions.
+<<<<<<<<=>>>>>>>>>>>>>>
+cmplMac = Compiles the Mac version. In order to run the mac version as if it were on mac, enter the ~/EZ-source/uploadtoEZ-lang directory and type: darling shell ./ez.mac example.ez
+cmplWin = Compiles the Windows version. Run the new file by entering the ~/EZ-source/uploadtoEZ-lang directory then typing: wineconsole --backend=curses "ez.exe" "example.ez"
+cmplLin = Compiles the Linux version. Run the new file by entering the ~/EZ-source/uploadtoEZ-lang directory then typing: ./ez.out example.ez
+cmplRst = Compiles the rest of the versions.
+cpAllEzcpAllEz = Copies everything to the EZ-lang directory.
+cmplAll = Compiles all of the versions, then runs updater, which grabs updates and new versions and installs them.
 updater = Updates the system that our server is on. Simply grabs updates and installs them.
 
 Note that you must be on the list of contributors in order to commit to git.
 If you are not on that list, simply request access by emailing realezlang@gmail.com
+NOTE: The mac version may or may not cause issues with the terminal and/or fail to delete certain files when run. DON'T FREAK OUT!!
+These issues are due to the mac program emulator not working. There is no fixing it. Simply delete the files and close the terminal you ran it in.
+If you are sick and tired of testing on all those platforms, the Linux version is your go-to. The program is built in C++, so the code is cross platform.
+BEFORE YOU UPLOAD!!!!: Run the following in a terminal: cmplAll
