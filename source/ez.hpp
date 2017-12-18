@@ -25,7 +25,7 @@
 	#define PLATFORM 2
 #endif
 #define to_string( x ) static_cast< std::ostringstream & >( \
-		        ( std::ostringstream() << std::dec << x ) ).str()
+	( std::ostringstream() << std::dec << x ) ).str()
 class Main {
 public:
 	Main();
@@ -463,10 +463,10 @@ float Main::pemdas(std::string thing)
 }
 // the head honcho of the program
 void Main::translate(const char* file, // the file itself
-							 std::vector<std::string>& variables, // the variables that are global
-							 std::vector<std::string>& values, // the values to those variables
-							 std::vector<std::vector<var> >& baskets,
-							 int& count, int wya, bool in_func, int nested) // co = count of variables, wya = where is the program
+							std::vector<std::string>& variables, // the variables that are global
+							std::vector<std::string>& values, // the values to those variables
+							std::vector<std::vector<var> >& baskets,
+							int& count, int wya, bool in_func, int nested) // co = count of variables, wya = where is the program
 {
 	std::ifstream fp(file);
 	std::vector<std::string> entire_file;
