@@ -13,9 +13,10 @@ cmplMac = Compiles the Mac version. In order to run the mac version as if it wer
 cmplWin = Compiles the Windows version. Run the new file by entering the ~/EZ-source/uploadtoEZ-lang directory then typing: wineconsole --backend=curses "ez.exe" "example.ez"
 cmplLin = Compiles the Linux version. Run the new file by entering the ~/EZ-source/uploadtoEZ-lang directory then typing: ./ez.out example.ez
 cmplRst = Compiles the rest of the versions.
-cpAllEzcpAllEz = Copies everything to the EZ-lang directory.
-cmplAll = Compiles all of the versions, then runs updater, which grabs updates and new versions and installs them.
+cpAllEz = Copies everything to the EZ-lang directory.
 updater = Updates the system that our server is on. Simply grabs updates and installs them.
+backpEZ = Backups the home directory of the server.
+cmplAll = Compiles all of the versions, then runs updater, then runs backpEZ.
 
 Note that you must be on the list of contributors in order to commit to git.
 If you are not on that list, simply request access by emailing realezlang@gmail.com
