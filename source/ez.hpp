@@ -703,7 +703,7 @@ void Main::translate(const char* file, // the file itself
 			if (!tof) {
 				int k = entire_file[i].find("else") + 4;
 				std::ofstream else_file;
-				std::string else_f = std::string("else" + to_string(problem));
+				std::string else_f = std::string("else" + to_string(problem) + '\0');
 				else_file.open(else_f.c_str());
 				for (int j = k + 1;; j++) {
 					if (j > entire_file[i].size()) {
