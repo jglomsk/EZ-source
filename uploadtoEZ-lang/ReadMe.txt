@@ -81,8 +81,7 @@ Another alternative (FOR MAC/LINUX ONLY):
 ## Known Bugs
 
 1. You may have to change the permissions on the interpreter file.
-	A: An ez fix (for Mac/Linux) is to change directory to the extracted files (with the cd command), then type the following command and then press the Enter key: chmod +x ez.out
-	B: An ez fix (for Windows) is to double click the ez.exe file or click and drag an ez file to the ez.exe file. This may (or may not) cause a window to appear, saying the file was downloaded from an untrusted source. 
+	A: An ez fix (for Windows) is to right click the ez.exe file and click "Run as administrator". This may (or may not) cause a window to appear, saying the file was downloaded from an untrusted source. 
 		I. If you downloaded this program from our GitHub (https://github.com/coderhelpfromtwitter/EZ-lang) then you are safe. Simply click "Advanced options" or "More Info" then click "Run Anyway."
 2. If you type the full path to your ez FILE (not to be confused with the interpreter) and include a source file via the "with" keyword, you may run into some issues running your ez file.
 	A: We suggest putting all your ez files that you want to use in the same place, then running one ez file at a time.

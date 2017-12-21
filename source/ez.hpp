@@ -136,7 +136,7 @@ void Main::end_n_del(std::vector<std::string> values, int lines)
 	for (int i = 0; i < funcs.size(); i++) {
 		remove(values[i].c_str());
 	}
-	for (int i = 0; i < lines; i++) {
+	for (int i = 0; i < lines + 10; i++) {
 		remove(std::string("else" + to_string(i)).c_str());
 		remove(std::string("if" + to_string(i)).c_str());
 		remove(std::string("while" + to_string(i)).c_str());
@@ -703,8 +703,8 @@ void Main::translate(const char* file, // the file itself
 			if (!tof) {
 				int k = entire_file[i].find("else") + 4;
 				std::ofstream else_file;
-				const char* else_f = std::string("else" + to_string(problem)).c_str();
-				else_file.open(else_f);
+				std::string else_f = std::string("else" + to_string(problem));
+				else_file.open(else_f.c_str());
 				for (int j = k + 1;; j++) {
 					if (j > entire_file[i].size()) {
 						i++;
@@ -743,8 +743,7 @@ void Main::translate(const char* file, // the file itself
 					else_file << put_me_in_coach;
 				}
 				else_file.close();
-				translate(else_f, variables, values, baskets, count, i, 0);
-				std::remove(else_f);
+				translate(else_f.c_str(), variables, values, baskets, count, i, 0);
 			}
 			else {
 				while (entire_file[i].find("done") == std::string::npos) i++;
