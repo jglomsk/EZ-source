@@ -516,7 +516,7 @@ void Main::translate(const char* file, // the file itself
 				try {
 					std::string fp_copy = "";
 					if (PLATFORM == 1) {
-						fp_copy = std::string("\"C:\\Program Files\\EZ\\") + fp_add + std::string("\"");
+						fp_copy = std::string("C:\\Program Files\\EZ\\") + fp_add;
 					}
 					else if (PLATFORM == 2) {
 						fp_copy = std::string("/usr/share/ez/") + fp_add;
