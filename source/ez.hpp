@@ -34,7 +34,7 @@ public:
 	int flush;
 	int line_count;
 	void end_n_del(std::vector<std::string> vals, int line_count = 100);
-	float pemdas(std::string thing);
+	float pemdas(std::string thing, int line);
 	void translate(const char* file, // the file itself
 							 	std::vector<std::string>& vars, // the variables that are global
 							 	std::vector<std::string>& vals, // the values to those variables
@@ -100,12 +100,12 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x > 8
 				values[p] = to_string(beg--);
-				if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i);
+				if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, problem, true);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg--;
-				if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i);
+				if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, problem, true);
 			}
 		}
 	}
@@ -113,12 +113,12 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x < 8
 				values[p] = to_string(beg++);
-				if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i);
+				if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, problem, true);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg++;
-				if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i);
+				if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, problem, true);
 			}
 		}
 	}
@@ -143,7 +143,7 @@ void Main::end_n_del(std::vector<std::string> values, int lines)
 	}
 }
 // turns a string equation into a real float
-float Main::pemdas(std::string thing)
+float Main::pemdas(std::string thing, int line)
 {
 	std::string new_string = "";
 	std::string wo_spaces = "";
@@ -189,7 +189,7 @@ float Main::pemdas(std::string thing)
 			paren_loc_end = j;
 		}
 		else if (thing.find('^', expo_loc + stuck) != std::string::npos && (thing.find('^', expo_loc) + stuck < paren_loc_beg ||
-			thing.find('^', expo_loc) + stuck > paren_loc_end)) {
+			thing.find('^', expo_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", expo_loc) != std::string::npos) {
 			int j = thing.find('^', expo_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -228,7 +228,7 @@ float Main::pemdas(std::string thing)
 			expo_loc = j + 1;
 		}
 		else if (thing.find('*', mult_loc + stuck) != std::string::npos && (thing.find('*', mult_loc) + stuck < paren_loc_beg || 
-																																				thing.find('*', mult_loc) + stuck > paren_loc_end)) {
+			thing.find('*', mult_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", mult_loc) != std::string::npos) {
 			int j = thing.find('*', mult_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -267,7 +267,7 @@ float Main::pemdas(std::string thing)
 			mult_loc = j + 1;
 		}
 		else if (thing.find('/', div_loc + stuck) != std::string::npos && (thing.find('/', div_loc) + stuck < paren_loc_beg ||
-			thing.find('/', div_loc) + stuck > paren_loc_end)) {
+			thing.find('/', div_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", div_loc) != std::string::npos) {
 			int j = thing.find('/', div_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -306,7 +306,7 @@ float Main::pemdas(std::string thing)
 			div_loc = j + 1;
 		}
 		else if (thing.find('+', plus_loc + stuck) != std::string::npos && (thing.find('+', plus_loc) + stuck < paren_loc_beg ||
-			thing.find('+', plus_loc) + stuck > paren_loc_end)) {
+			thing.find('+', plus_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", plus_loc) != std::string::npos) {
 			int j = thing.find('+', plus_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -345,7 +345,7 @@ float Main::pemdas(std::string thing)
 			plus_loc = j + 1;
 		}
 		else if (thing.find('-', min_loc + stuck) != std::string::npos && (thing.find('-', min_loc) + stuck < paren_loc_beg ||
-			thing.find('-', min_loc) + stuck > paren_loc_end)) {
+			thing.find('-', min_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", min_loc) != std::string::npos) {
 			int j = thing.find('-', min_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -388,6 +388,18 @@ float Main::pemdas(std::string thing)
 			int stop_here = thing.find(';');
 			for (int i = 0; i < stop_here; i++) wo_comments += thing[i];
 			break;
+		}
+		else if (thing.find_first_of("1234567890", min_loc) == std::string::npos ||
+			thing.find_first_of("1234567890", plus_loc) == std::string::npos ||
+			thing.find_first_of("1234567890", mult_loc) == std::string::npos ||
+			thing.find_first_of("1234567890", div_loc) == std::string::npos ||
+			thing.find_first_of("1234567890", expo_loc) == std::string::npos ||
+			thing.find_first_of("1234567890", paren_loc_beg) == std::string::npos) {
+			std::cout << "You failed to do something in the formula on line " << line << ".\n";
+			std::cout << "Check the formula, maybe you forgot to type a number somewhere.\n";
+			std::cout << "The program will now exit.\nError code: num83r\n";
+			end_n_del(funcs, line);
+			endp(83, flush);
 		}
 		else {
 			stuck++;
@@ -487,7 +499,7 @@ void Main::translate(const char* file, // the file itself
 	fp.close();
 	// begin big loop
 	for (int i = 0; i < newlinesnum; i++) {
-		if (in_func) problem = abs(wya - (newlinesnum - i));
+		if (in_func) problem = abs(wya - (newlinesnum - i) + 1) + 1;
 		else problem = i + 1;
 		int comment_limit = 0;
 		if (entire_file[i].find(';') != std::string::npos) comment_limit = entire_file[i].find(';');
@@ -510,7 +522,7 @@ void Main::translate(const char* file, // the file itself
 			}
 			try {
 				std::ifstream fp_test(fp_add.c_str());
-				if (fp_test) translate(fp_add.c_str(), variables, values, baskets, count);
+				if (fp_test) translate(fp_add.c_str(), variables, values, baskets, count, problem);
 				else throw 107;
 			} catch (...) {
 				try {
@@ -522,7 +534,7 @@ void Main::translate(const char* file, // the file itself
 						fp_copy = std::string("/usr/local/share/ez/") + fp_add;
 					}
 					std::ifstream fp_test(fp_copy.c_str());
-					if (fp_test) translate(fp_copy.c_str(), variables, values, baskets, count);
+					if (fp_test) translate(fp_copy.c_str(), variables, values, baskets, count, problem);
 					else throw 107;
 				} catch (...) {
 					std::cout << "Import Error.\nCheck your import file and make sure you typed the correct file name.\n";
@@ -675,7 +687,7 @@ void Main::translate(const char* file, // the file itself
 						do_me_hard << put_me_in_coach;
 					}
 					do_me_hard.close();
-					translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, i, false, nest);
+					translate(std::string("conditional" + to_string(problem)).c_str(), variables, values, baskets, count, problem, true, nest);
 					remove(std::string("conditional" + to_string(problem)).c_str());
 				}
 				else {
@@ -742,7 +754,7 @@ void Main::translate(const char* file, // the file itself
 					else_file << put_me_in_coach;
 				}
 				else_file.close();
-				translate(else_f.c_str(), variables, values, baskets, count, i, 0);
+				translate(else_f.c_str(), variables, values, baskets, count, problem, true);
 			}
 			else {
 				while (entire_file[i].find("done") == std::string::npos) i++;
@@ -774,7 +786,13 @@ void Main::translate(const char* file, // the file itself
 				end_n_del(funcs, problem);
 				endp(170, flush);
 			}
-			while (entire_file[i][k] == ' ') k++;
+			while (entire_file[i][k] == ' ' && k < comment_limit) k++;
+			if (entire_file[i][k] == ';') {
+				std::cout << "You did not specify a basket to add to and/or did not specify something to push into a basket on line " << problem << ".\n";
+				std::cout << "The program will now exit.\nError code: b45k37\n";
+				end_n_del(funcs, problem);
+				endp(4537, flush);
+			}
 			for (; entire_file[i][k] != ' ' && entire_file[i][k] != '\0' && k < comment_limit; k++) {
 				basket_im_adding_to += entire_file[i][k];
 			}
@@ -1026,7 +1044,7 @@ void Main::translate(const char* file, // the file itself
 				if (funcs[j] == call_name) {
 					std::vector<std::string> varTemp = variables;
 					std::vector<std::string> valTemp = values;
-					translate(funcs[j].c_str(), varTemp, valTemp, baskets, count, i, true);
+					translate(funcs[j].c_str(), varTemp, valTemp, baskets, count, problem, true);
 				}
 			}
 		}
@@ -1051,7 +1069,7 @@ void Main::translate(const char* file, // the file itself
 					for (int a = k; a < stop_here; a++) {
 						thing += entire_file[i][a];
 					}
-					std::cout << pemdas(thing) << '\n';
+					std::cout << pemdas(thing, problem) << '\n';
 				}
 				else if (count < 1) {
 					for (int b = k; b < stop_here; b++) {
@@ -1084,7 +1102,7 @@ void Main::translate(const char* file, // the file itself
 										break;
 										break;
 									}
-									else if (thing.find('[') != std::string::npos) {
+									else if (thing.find('[') != std::string::npos && thing.find(']') != std::string::npos) {
 										std::string u = "";
 										std::string new_thing = "";
 										for (int j = 0; thing[j] != '['; j++) {
@@ -1162,7 +1180,7 @@ void Main::translate(const char* file, // the file itself
 							for (int a = copy_k; a < stop_here; a++) {
 								thing += entire_file[i][a];
 							}
-							values[j] = to_string(pemdas(thing));
+							values[j] = to_string(pemdas(thing, problem));
 						}
 						else {
 							if (copy_k < stop_here) {
@@ -1187,7 +1205,7 @@ void Main::translate(const char* file, // the file itself
 							for (int a = copy_k; a < stop_here; a++) {
 								thing += entire_file[i][a];
 							}
-							values[count] = to_string(pemdas(thing));
+							values[count] = to_string(pemdas(thing, problem));
 						}
 						else {
 							if (copy_k < stop_here) {
