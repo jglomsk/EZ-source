@@ -5,9 +5,13 @@ sudo mkdir /usr/local/share &>/dev/null
 sudo mkdir /usr/local/share/ez &>/dev/null
 if [ "$(uname)" == "Linux" ]; then
 	sudo cp ez.out /usr/local/bin/ez
+	sudo cp ezr.out /usr/local/bin/ezr
+	sudo rm -rf ezr.mac
 	sudo rm -rf ez.mac
 else
 	sudo cp ez.mac /usr/local/bin/ez
+	sudo cp ezr.mac /usr/local/bin/ezr
+	sudo rm -rf ezr.out
 	sudo rm -rf ez.out
 fi
 sudo cp help.ez /usr/local/share/ez/ && sudo rm -rf help.ez # copy libs then delete that file
@@ -21,12 +25,19 @@ echo
 if [ "$y_or_n" = "y" ]; then
 	if [ "$(uname)" == "Linux" ]; then
 		sudo rm -rf ez.out
+		sudo rm -rf ezr.out
 	else
 		sudo rm -rf ez.mac
+		sudo rm -rf ezr.mac
 	fi
 else
 	echo "Deletion declined."
 fi
+echo "Command: ezr"
+echo "Description: "
+echo
+echo "Uses the ez interpreter as an interactive shell."
+echo
 echo "Command: ez"
 echo "Usage: ez <ez-file>"
 echo "Description: "
