@@ -20,6 +20,7 @@ sudo cp sauce.ez /usr/local/share/ez/ && sudo rm -rf sauce.ez
 sudo cp all.ez /usr/local/share/ez/ && sudo rm -rf all.ez
 sudo rm -rf ezwin_install.exe
 sudo rm -rf ez.exe
+sudo rm -rf ezr.exe
 read -n1 -p "Would you like to delete the original interpreter? [y,n]: " y_or_n;
 echo
 if [ "$y_or_n" = "y" ]; then
