@@ -17,9 +17,9 @@ int main()
 			x.translate(fi.c_str(), variables, values, baskets, count);
 			remove(fi.c_str());
 		}
-		std::cout << "EZr: ";
+		if (answer.find("input") == std::string::npos) std::cout << "EZr: ";
 		std::getline(std::cin, answer);
 	}
 	x.end_n_del(x.funcs, x.line_count);
-	endp(0, x.flush);
+	return 0;
 }
