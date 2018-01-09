@@ -9,7 +9,15 @@ int main()
 	Main x;
 	srand(0);
 	while (answer != "exit") {
-		if (answer != "") {
+		if (answer.find("while") != std::string::npos ||
+				answer.find("push") != std::string::npos ||
+				answer.find("if") != std::string::npos ||
+				answer.find("else") != std::string::npos ||
+				answer.find("make") != std::string::npos) { // ALL OF THESE CAUSE SEG FAULT
+			std::cout << "Make an ez file and use the interpreter on it for all the features of EZ.\n";
+			std::cout << "Keywords included in this interactive shell are: set, show, with, call\n";
+		}
+		else if (answer != "") {
 			std::string fi = to_string(rand());
 			std::ofstream fp(fi.c_str());
 			fp << answer.c_str();

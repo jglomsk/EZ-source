@@ -1,3 +1,8 @@
+sudo printf ""
+if [ "$EUID" -ne 0 ]; then
+	echo "Please don't run without being admin/sudo."
+	exit
+fi
 sudo chmod +x ez.out # change perms
 sudo chmod +x ez.mac
 sudo mkdir /usr/local/bin &>/dev/null
