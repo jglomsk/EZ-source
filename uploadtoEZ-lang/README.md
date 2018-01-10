@@ -1,4 +1,4 @@
-# EZ-source
+# EZ-lang
 
 ## Introduction
 

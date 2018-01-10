@@ -51,3 +51,6 @@ echo
 echo "Uses the ez interpreter to run a .ez file."
 echo
 echo "Install completed successfully."
+echo
+echo "This install file will now self-destruct."
+sudo rm -rf eznix_install.bash
