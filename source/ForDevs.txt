@@ -9,7 +9,7 @@ We have a couple commands already set up. They are below.
 
 Command = What it does.
 <<<<<<<<=>>>>>>>>>>>>>>
-cmplMac = Compiles the Mac version. In order to run the mac version as if it were on mac, enter the ~/EZ-source/uploadtoEZ-lang directory and type: darling shell ./ez.mac example.ez
+cmplMac = Compiles the Mac version.
 cmplWin = Compiles the Windows version. Run the new file by entering the ~/EZ-source/uploadtoEZ-lang directory then typing: wineconsole --backend=curses "ez.exe" "example.ez"
 cmplLin = Compiles the Linux version. Run the new file by entering the ~/EZ-source/uploadtoEZ-lang directory then typing: ./ez.out example.ez
 cmplRst = Compiles the rest of the versions.
