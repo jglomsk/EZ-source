@@ -75,6 +75,7 @@ int main(int argc, char** argv)
     system("sudo cp all.ez /usr/local/share/ez/ && sudo rm -rf all.ez");
     system("sudo rm -rf ez.exe");
     system("sudo rm -rf ezr.exe");
+    system("sudo rm -rf install.exe");
     char y_or_n = '\0';
     std::cout << "Would you like to delete the original interpreter? [y,n]: ";
     std::cin >> y_or_n;
