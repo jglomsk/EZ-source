@@ -109,7 +109,7 @@ Another alternative (FOR MAC/LINUX ONLY):
 <br/>
 1. Open a terminal (Mac: Command + Space, then search "Terminal"; Linux people should know how to do this).
 2. Change to the directory you extracted the files to (should be like ~/Downloads/EZ-lang). Use the cd command to do this (e.g. `cd ~/Downloads/EZ-lang`) and then press Enter.
-3. Type the following command then press Enter: `sudo bash eznix_install.bash`
+3. Type the following command then press Enter: `sudo ./install.out` or if you're on Mac: `sudo ./install.mac`
 	1. WARNING!!! This command will ask for an admin password. If you are not an admin, simply do not use this method. Instead, use the original method or the first alternative.
 4. Now you can change directory to wherever you want and simply type `ez <ez_file.ez>` replacing `<ez_file.ez>` with the name of your ez file, followed by the Enter key. Do not include the carets (<>) in the name.
 
