@@ -1,0 +1,8 @@
+make class do                ; classes!!
+  set in_class to basket     ; you can set a variable inside a class
+  make class_func do         ; you can make functions inside classes
+    push 82 into in_class    ; pushes something into the basket
+    set in_class_func to 90  ; you can set variables inside functions that are inside classes
+  done                       ; finish the class function
+  call class_func            ; you can call the class function from within the class
+done                         ; finish class

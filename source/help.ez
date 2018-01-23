@@ -19,6 +19,8 @@ make help do
   show Then, push something into it (e.g. push 82 into x).
   show Show off that basket with a show keyword (e.g. show x), or show off a single element (e.g. show x[1]).
   show Elements in baskets start at 0, and go up by one (e.g. x[0] will equal the first thing you push into x, x[1] will be the second).
+  show You can now make classes. Check class.ez for examples.
+  show Classes are simply made just like functions, but they can hold other functions and variables inside.
   show Showing a variable inside of a formula is not supported in this version of EZ (e.g. show x + 2).
   show One line if else statements are not supported in this version of EZ (e.g. if x > 1 stuff done else stuff done).
   show Out of order formulas are not supported in this version of EZ (e.g. 2*3^5 is not supported, but (2*3)^5 and 2*(3^5) are supported).

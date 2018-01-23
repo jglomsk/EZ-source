@@ -12,6 +12,6 @@ int main(int argc, char** argv)
 		int count = 0;
 		x.translate(argv[1], varis, valis, baskets, count);
 		x.end_n_del(x.funcs);
-    return 0;
+		return 0;
 	}
 }

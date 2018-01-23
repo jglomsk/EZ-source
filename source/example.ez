@@ -1,4 +1,4 @@
-with all.ez                  ; try importing
+with creator.ez              ; try importing
 set global to 82             ; global = 82
 show global                  ; shows 82
 make my_func do              ; makes my_func a function
@@ -52,3 +52,14 @@ else if global > 1           ; evaluates to true
     show Bug fixed!          ; we did it!
   done                       ; finish
 done                         ; finish
+make class do                ; classes!!
+  set in_class to basket     ; you can set a variable inside a class
+  make class_func do         ; you can make functions inside classes
+    push 84 into in_class    ; pushes something into the basket
+    set in_class_func to 90  ; you can set variables inside functions that are inside classes
+    show in_class            ; variables made outside class functions are considered global while in the class
+    show in_class_func       ; variables inside class functions are considered local to the function
+  done                       ; finish the class function
+  call class_func            ; you can call the class function from within the class
+done                         ; finish class
+call class                   ; classes are like functions, you have to call them for them to work

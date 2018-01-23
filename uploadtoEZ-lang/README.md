@@ -58,6 +58,10 @@ Show off that basket with a show keyword (e.g. `show x`), or show off a single e
 <br/>
 Elements in baskets start at 0, and go up by one (e.g. `x[0]` will equal the first thing you push into `x`, `x[1]` will be the second).
 <br/>
+You can now make classes. Check class.ez for examples.
+<br/>
+Classes are simply made just like functions, but they can hold other functions and variables inside.
+<br/>
 Showing a variable inside of a formula is not supported in this version of EZ (e.g. `show x + 2`).
 <br/>
 One line if else statements are not supported in this version of EZ (e.g. `if x > 1 stuff done else stuff done`).
@@ -70,7 +74,7 @@ Setting while loops to check for words is not supported in this version of EZ (e
 
 ## Running
 
-In order to create and use your program, you're going to need (for alternative, go to line 68):
+In order to create and use your program, you're going to need:
 <br/>
 1. The interpreter that you should have downloaded.
 	1. For Windows users: `ez.exe`
