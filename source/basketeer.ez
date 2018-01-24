@@ -1,0 +1,8 @@
+set basketeer to basket
+set u to 3
+push 82 into basketeer
+push 1 into basketeer
+push 12 into basketeer
+while u > 0 do
+  show basketeer[u - 1]
+done

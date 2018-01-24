@@ -11,6 +11,7 @@
 #pragma once
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
 #include <fstream>
 #include <vector>
 #include <string>
@@ -1111,16 +1112,16 @@ void Main::translate(const char* file, // the file itself
 							std::string thing = "";
 							bool not_done = false;
 							int here = 0;
-							for (int e = k; e < stop_here && entire_file[i][e] != ' '; e++) {
+							for (int e = k; e < stop_here && entire_file[i][e] != '\n'; e++) {
 								thing += entire_file[i][e];
 								here = e + 1;
 							}
-							if (entire_file[i].find_first_of("\
-							1234567890-=qwertyuiop\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+\
-							QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) < stop_here &&
-							entire_file[i].find_first_of("\
-							1234567890-=qwertyuiop\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+\
-							QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?", here + 1) != std::string::npos) not_done = true;
+							if (entire_file[i].find_first_of(
+								"1234567890-=qwertyuiop\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
+								here + 1) < stop_here &&
+							entire_file[i].find_first_of(
+								"\1234567890-=qwertyuiop\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
+								here + 1) != std::string::npos) not_done = true;
 							if (thing == variables[p] && !not_done) {
 								std::cout << values[p];
 								std::cout << '\n';
@@ -1139,13 +1140,41 @@ void Main::translate(const char* file, // the file itself
 									else if (thing.find('[') != std::string::npos && thing.find(']') != std::string::npos) {
 										std::string u = "";
 										std::string new_thing = "";
+										int found_it = -1;
 										for (int j = 0; thing[j] != '['; j++) {
 											new_thing += thing[j];
 										}
 										for (int m = thing.find('[') + 1; m < thing.size() && thing[m] != ']'; m++) {
 											u += thing[m];
 										}
-										if (new_thing == baskets[y][0].getsdata()) {
+										for (int m = 0; m < variables.size(); m++) {
+											if (u.find(variables[m].c_str()) != std::string::npos) {
+												found_it = m;
+												break;
+											}
+										}
+										std::string new_new = "";
+										bool formula = false;
+										if (found_it > -1) {
+											for (int m = 0, n = 0; m < u.size(); m++) {
+												if (u.find(variables[n].c_str(), m) != std::string::npos) {
+													new_new += values[m + 1].c_str();
+													m += variables[n + 1].size();
+													n++;
+												}
+												else {
+													new_new += u[m];
+												}
+											}
+											formula = true;
+										}
+										if (formula && found_it > -1 && new_thing == baskets[y][0].getsdata()){
+											std::cout << baskets[y][pemdas(new_new, problem) + 1] << '\n';
+										}
+										else if (found_it > -1 && new_thing == baskets[y][0].getsdata()) {
+											std::cout << baskets[y][std::atoi(values[found_it].c_str()) + 1] << '\n';
+										}
+										else if (new_thing == baskets[y][0].getsdata()) {
 											std::cout << baskets[y][std::atoi(u.c_str()) + 1] << '\n';
 										}
 									}
