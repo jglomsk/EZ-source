@@ -2031,47 +2031,47 @@ bool operator<=(const var& lhs, const var& rhs)
 // gets idata
 const int* var::getidata() const
 {
-	return idata;
+	return (idata != 0) ? idata : 0;
 }
 // gets cdata
 const char* var::getcdata() const
 {
-	return cdata;
+	return (cdata != 0) ? cdata : 0;
 }
 // gets fdata
 const float* var::getfdata() const
 {
-	return fdata;
+	return (fdata != 0) ? fdata : 0;
 }
 // gets ddata
 const double* var::getddata() const
 {
-	return ddata;
+	return (ddata != 0) ? ddata : 0;
 }
 // gets bdata
 const bool* var::getbdata() const
 {
-	return bdata;
+	return (bdata != 0) ? bdata : 0;
 }
 // gets ldata
 const long int* var::getldata() const
 {
-	return ldata;
+	return (ldata != 0) ? ldata : 0;
 }
 // gets lldata
 const long long int* var::getlldata() const
 {
-	return lldata;
+	return (lldata != 0) ? lldata : 0;
 }
 // gets ulldata
 const unsigned long long int* var::getulldata() const
 {
-	return ulldata;
+	return (ulldata != 0) ? ulldata : 0;
 }
 // gets sdata
 const char* var::getsdata() const
 {
-	return (sdata) ? sdata : 0;
+	return (sdata != 0) ? sdata : 0;
 }
 // overloading the += operator
 var& var::operator+=(const var& rhs)

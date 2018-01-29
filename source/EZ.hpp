@@ -1112,15 +1112,22 @@ void Main::translate(const char* file, // the file itself
 							std::string thing = "";
 							bool not_done = false;
 							int here = 0;
-							for (int e = k; e < stop_here && entire_file[i][e] != '\n'; e++) {
+							for (int e = k; e < stop_here && entire_file[i][e] != ' ' && entire_file[i][e] != '['; e++) {
 								thing += entire_file[i][e];
 								here = e + 1;
 							}
+							if (entire_file[i][here] == '[') {
+								for (int e = here; entire_file[i][e] != ']'; e++) {
+									thing += entire_file[i][e];
+									here = e;
+								}
+								thing += ']';
+							}
 							if (entire_file[i].find_first_of(
-								"1234567890-=qwertyuiop\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
+								"1234567890-=qwertyuiop\\asdfghjkl'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
 								here + 1) < stop_here &&
 							entire_file[i].find_first_of(
-								"\1234567890-=qwertyuiop\\asdfghjkl;'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
+								"1234567890-=qwertyuiop\\asdfghjkl'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
 								here + 1) != std::string::npos) not_done = true;
 							if (thing == variables[p] && !not_done) {
 								std::cout << values[p];
@@ -1130,7 +1137,7 @@ void Main::translate(const char* file, // the file itself
 							else if (!not_done && !baskets.empty()) {
 								bool done = false;
 								for (int y = 0; y < baskets.size(); y++) {
-									if (thing == baskets[y][0].getsdata() && thing.find('[') == std::string::npos) {
+									if (baskets[y][0].getsdata() == thing && thing.find('[') == std::string::npos) {
 										for (int m = 1; m < baskets[y].size(); m++) std::cout << (m - 1) << ": " << baskets[y][m] << '\n';
 										done = true;
 										break;
@@ -1153,14 +1160,21 @@ void Main::translate(const char* file, // the file itself
 												break;
 											}
 										}
+										if ((found_it > -1 && std::atoi(values[found_it].c_str()) > baskets.size()) ||
+											std::atoi(u.c_str()) > baskets.size() + 1) {
+											std::cout << "You are trying to access part of a basket that does not exist yet.\n";
+											std::cout << "The program will now exit.\n";
+											std::cout << "Error code: m3m0ry\n";
+											end_n_del(funcs, problem);
+											endp(30, flush);
+										}
 										std::string new_new = "";
 										bool formula = false;
 										if (found_it > -1) {
-											for (int m = 0, n = 0; m < u.size(); m++) {
-												if (u.find(variables[n].c_str(), m) != std::string::npos) {
-													new_new += values[m + 1].c_str();
-													m += variables[n + 1].size();
-													n++;
+											for (int m = 0; m < u.size(); m++) {
+												if (u.find(variables[m].c_str(), m) != std::string::npos &&
+													variables[m] != "") {
+													new_new += values[m].c_str();
 												}
 												else {
 													new_new += u[m];

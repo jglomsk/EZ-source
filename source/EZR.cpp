@@ -1,4 +1,4 @@
-#include "ez.hpp"
+#include "EZ.hpp"
 int main()
 {
 	std::string answer = "";

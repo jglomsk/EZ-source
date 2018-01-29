@@ -35,7 +35,6 @@ if global > 50               ; if statement 1
     done                     ; finish while loop
   done                       ; finish statement 2
 done                         ; finish statement 1
-call in_file                 ; calls the function made in the sauce file
 set x to basket              ; new data structure that holds all kinds of data
 push 823 into x              ; you can push an integer into baskets
 push hi into x               ; you can push strings into baskets

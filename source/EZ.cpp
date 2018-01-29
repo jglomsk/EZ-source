@@ -1,4 +1,4 @@
-#include "ez.hpp"
+#include "EZ.hpp"
 int main(int argc, char** argv)
 {
 	if (argc < 2) {
@@ -10,8 +10,15 @@ int main(int argc, char** argv)
 		std::vector<std::string> valis(20);
 		std::vector<std::vector<var> > baskets;
 		int count = 0;
-		x.translate(argv[1], varis, valis, baskets, count);
-		x.end_n_del(x.funcs, x.line_count);
-		endp(0, x.flush);
+		std::ifstream fp(argv[1]);
+		if (fp.good()) {
+			x.translate(argv[1], varis, valis, baskets, count);
+			x.end_n_del(x.funcs, x.line_count);
+			endp(0, x.flush);
+		}
+		else {
+			std::cout << "Use an ez file that exists.\n";
+			endp(2);
+		}
 	}
 }
