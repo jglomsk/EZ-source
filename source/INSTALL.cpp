@@ -70,6 +70,7 @@ int main(int argc, char** argv)
 		system("sudo mkdir /usr/local/bin &>/dev/null");
 		system("sudo mkdir /usr/local/share &>/dev/null");
 		system("sudo mkdir /usr/local/share/ez &>/dev/null");
+		system("sleep .5s");
 		system("sudo cp help.ez /usr/local/share/ez/ && sudo rm -rf help.ez");
 		system("sudo cp creator.ez /usr/local/share/ez/ && sudo rm -rf creator.ez");
 		system("sudo cp sauce.ez /usr/local/share/ez/ && sudo rm -rf sauce.ez");
