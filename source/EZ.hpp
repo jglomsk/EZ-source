@@ -18,6 +18,7 @@
 #include <cctype>
 #include <cstring>
 #include <cstdio>
+#include <cstring>
 #include <sstream>
 #include "mere.hpp"
 #ifdef _WIN32
@@ -40,20 +41,22 @@ public:
 								 std::vector<std::string>& vars, // the variables that are global
 								 std::vector<std::string>& vals, // the values to those variables
 								 std::vector<std::vector<var> >& baskets,
-								 int& co, int wya = 0, bool in_func = false, int nested = 0);
+								 int& co, int wya = 0, bool in_func = false, int nested = 0, std::string param = "");
 	void while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables,
 											 std::vector<std::string>& values, std::vector<std::vector<var> >& baskets,
 											 int k, int i, int& count, int problem, std::string im_this,
-											 std::vector<std::string> entire_file, std::string thing, int comment_limit = 0);
+											 std::vector<std::string> entire_file, std::string thing, int comment_limit = 0,
+											 std::string param = "");
 };
 // does the while loop keyword
 void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables,
 													std::vector<std::string>& values, std::vector<std::vector<var> >& baskets,
 													int k, int i, int& count, int problem, std::string im_this, std::vector<std::string> entire_file,
-													std::string thing, int comment_limit)
+													std::string thing, int comment_limit, std::string param)
 {
 	int nest = 0;
 	std::ofstream do_me_hard;
+	bool has_param = false;
 	do_me_hard.open(std::string("conditional" + to_string(problem)).c_str());
 	for (int j = k + 1;; j++) {
 		if ((entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
@@ -91,6 +94,9 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 			end_n_del(funcs, problem);
 			endp(603, flush);
 		}
+		else if (entire_file[i].find(param.c_str(), j - 1) != std::string::npos && param != "") {
+			has_param = true;
+		}
 		else if (j > entire_file[i].size()) {
 			i++;
 			j = 0;
@@ -104,13 +110,17 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x > 8
 				values[p] = to_string(beg--);
-				if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
+				if (beg > end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
+																						variables, values, baskets, count, problem, true, 0, param);
+				else if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
 																variables, values, baskets, count, problem, true);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg--;
-				if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
+				if (beg > end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
+																						variables, values, baskets, count, problem, true, 0, param);
+				else if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
 																variables, values, baskets, count, problem, true);
 			}
 		}
@@ -119,13 +129,17 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x < 8
 				values[p] = to_string(beg++);
-				if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
+				if (beg < end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
+																						variables, values, baskets, count, problem, true, 0, param);
+				else if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
 																variables, values, baskets, count, problem, true);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg++;
-				if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
+				if (beg < end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
+																						variables, values, baskets, count, problem, true, 0, param);
+				else if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
 																variables, values, baskets, count, problem, true);
 			}
 		}
@@ -486,18 +500,49 @@ void Main::translate(const char* file, // the file itself
 							std::vector<std::string>& variables, // the variables that are global
 							std::vector<std::string>& values, // the values to those variables
 							std::vector<std::vector<var> >& baskets,
-							int& count, int wya, bool in_func, int nested) // co = count of variables, wya = where is the program
+							int& count, int wya, bool in_func, int nested, std::string param) // co = count of variables, wya = where is the program
 {
 	std::ifstream fp(file);
 	std::vector<std::string> entire_file;
 	int newlinesnum = 0;
 	int problem = 0;
 	int nest = nested;
+	bool has_param_nest = false;
+	std::string new_param = "";
 	// reading in file into entire_file
 	while (!fp.eof()) {
 		std::string curr = "";
 		std::getline(fp, curr);
 		newlinesnum++;
+		if (curr.find((param + "").c_str()) != std::string::npos && param != "") {
+			for (int n = 0; n < variables.size(); n++) {
+				if (param == variables[n]) curr.replace(curr.find(param.c_str()), param.size(), variables[n].c_str());
+			}
+		}
+		else if (param != "" && curr.find("wp") != std::string::npos) {
+			has_param_nest = true;
+			int p = curr.find("wp") + 2;
+			while (curr[p] == ' ') p++;
+			for (; curr[p] != ' ' && curr[p] != '\0' && curr[p] != '\n'; p++) new_param += curr[p];
+			curr.replace(p - 1, new_param.size(), param.c_str());
+		}
+		if (curr.find((new_param + "").c_str()) != std::string::npos && new_param != "") {
+			curr.replace(curr.find(new_param.c_str()), new_param.size(), param.c_str());
+			for (int n = 0; n < variables.size(); n++) {
+				if (strcmp(param.c_str(), variables[n].c_str()) == 0) {
+					curr.replace(curr.find(param.c_str()), param.size(), variables[n].c_str());
+					break;
+				}
+			}
+		}
+		else if (curr.find((param + "").c_str()) != std::string::npos && param != "") {
+			for (int n = 0; n < variables.size(); n++) {
+				if (strcmp(param.c_str(), variables[n].c_str()) == 0) {
+					curr.replace(curr.find(param.c_str()), param.size(), variables[n].c_str());
+					break;
+				}
+			}
+		}
 		entire_file.push_back(curr);
 	}
 	// limit for entire program
@@ -984,6 +1029,7 @@ void Main::translate(const char* file, // the file itself
 			std::ofstream func_file;
 			func_file.open(func_name.c_str());
 			funcs.push_back(func_name);
+			std::string param = "";
 			if (entire_file[i][k] == '\0') i++;
 			else while (entire_file[i][k] == ' ' || entire_file[i][k] == 'd' || entire_file[i][k] == 'o') k++;
 			for (int j = k + 1;; j++) {
@@ -1060,8 +1106,17 @@ void Main::translate(const char* file, // the file itself
 			else stop_here = entire_file[i].size();
 			while (entire_file[i][k] == ' ') k++;
 			std::string call_name = "";
+			std::string param = "";
 			for (; k < stop_here && entire_file[i][k] != ' ' && entire_file[i][k] != '\0'; k++) {
 				call_name += entire_file[i][k];
+			}
+			if (entire_file[i][k] == ' ' && entire_file[i].find("wp", k) < stop_here &&
+					entire_file[i].find("wp", k) != std::string::npos) {
+				k += (entire_file[i].find("wp", k) - k) + 2;
+				while (entire_file[i][k] == ' ') k++;
+				for (; k < stop_here && entire_file[i][k] != ' ' && entire_file[i][k] != '\0'; k++) {
+					param += entire_file[i][k];
+				}
 			}
 			for (int j = 0; j < funcs.size(); j++) {
 				if (call_name == "") {
@@ -1073,7 +1128,12 @@ void Main::translate(const char* file, // the file itself
 				if (funcs[j] == call_name) {
 					std::vector<std::string> varTemp = variables;
 					std::vector<std::string> valTemp = values;
-					translate(funcs[j].c_str(), varTemp, valTemp, baskets, count, problem, true);
+					if (param != "") {
+						translate(funcs[j].c_str(), varTemp, valTemp, baskets, count, problem, true, nest, param);
+					}
+					else {
+						translate(funcs[j].c_str(), varTemp, valTemp, baskets, count, problem, true);
+					}
 				}
 			}
 		}
