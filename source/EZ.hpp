@@ -32,6 +32,7 @@ class Main {
 public:
 	Main();
 	std::vector<std::string> funcs; // need this for function keeping and file deleting at the end
+	std::vector<std::string> new_params;
 	bool tof;
 	int flush;
 	int line_count;
@@ -123,6 +124,14 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 				else if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
 																variables, values, baskets, count, problem, true);
 			}
+			else if (im_this == "2var") {
+				values[p] = to_string(beg--);
+				if (beg > end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
+																						variables, values, baskets, count, problem, true, 0, param);
+				else if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
+																variables, values, baskets, count, problem, true);
+				break;
+			}
 		}
 	}
 	else if (beg < end) while (beg < end) {
@@ -141,6 +150,14 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 																						variables, values, baskets, count, problem, true, 0, param);
 				else if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
 																variables, values, baskets, count, problem, true);
+			}
+			else if (im_this == "2var") {
+				values[p] = to_string(beg++);
+				if (beg < end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
+																						variables, values, baskets, count, problem, true, 0, param);
+				else if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
+																variables, values, baskets, count, problem, true);
+				break;
 			}
 		}
 	}
@@ -514,32 +531,67 @@ void Main::translate(const char* file, // the file itself
 		std::string curr = "";
 		std::getline(fp, curr);
 		newlinesnum++;
-		if (curr.find((param + "").c_str()) != std::string::npos && param != "") {
+		bool has_basket = false;
+		if (curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos &&
+					new_param != "" && !baskets.empty()) {
+			for (int n = 0; n < baskets.size(); n++) {
+				if (param == baskets[n][0].getsdata()) {
+					curr.replace(curr.find(new_param.c_str(), 0, new_param.size()), new_param.size(),
+						baskets[n][0].getsdata());
+					has_basket = true;
+				}
+			}
+		}
+		else if (curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos && new_param != "") {
+			for (int n = 0; n < new_params.size() && n < variables.size(); n++) {
+				if (new_params[n] == variables[n] && new_params[n] != "") {
+					curr.replace(curr.find(new_param.c_str(), 0, new_param.size()), new_param.size(), new_params[n].c_str());
+				}
+			}
+		}
+		else if (curr.find(param.c_str(), 0, param.size()) != std::string::npos && param != "") {
 			for (int n = 0; n < variables.size(); n++) {
-				if (param == variables[n]) curr.replace(curr.find(param.c_str()), param.size(), variables[n].c_str());
+				if (param == variables[n] && param != "") curr.replace(curr.find(param.c_str(), 0, param.size()) - 1, param.size(), variables[n].c_str());
 			}
 		}
 		else if (param != "" && curr.find("wp") != std::string::npos) {
 			has_param_nest = true;
 			int p = curr.find("wp") + 2;
 			while (curr[p] == ' ') p++;
-			for (; curr[p] != ' ' && curr[p] != '\0' && curr[p] != '\n'; p++) new_param += curr[p];
-			curr.replace(p - 1, new_param.size(), param.c_str());
-		}
-		if (curr.find((new_param + "").c_str()) != std::string::npos && new_param != "") {
-			curr.replace(curr.find(new_param.c_str()), new_param.size(), param.c_str());
-			for (int n = 0; n < variables.size(); n++) {
-				if (strcmp(param.c_str(), variables[n].c_str()) == 0) {
-					curr.replace(curr.find(param.c_str()), param.size(), variables[n].c_str());
-					break;
-				}
+			if (new_param == "") for (; curr[p] != ' ' && curr[p] != '\0' && curr[p] != '\n'; p++) new_param += curr[p];
+			else {
+				new_param = "";
+				for (; curr[p] != ' ' && curr[p] != '\0' && curr[p] != '\n'; p++) new_param += curr[p];
 			}
+			if (std::find(new_params.begin(), new_params.end(), param) == new_params.end() || new_params.size() == 0) {
+				new_params.push_back(param);
+			}
+			if (std::find(new_params.begin(), new_params.end(), new_param) == new_params.end() || new_params.size() == 0) {
+				new_params.push_back(new_param);
+			}
+			if (new_params.size() == 1) curr.replace(p - new_param.size(), p, param.c_str());
+			else curr.replace(p - new_param.size(), p, param.c_str());
 		}
-		else if (curr.find((param + "").c_str()) != std::string::npos && param != "") {
-			for (int n = 0; n < variables.size(); n++) {
-				if (strcmp(param.c_str(), variables[n].c_str()) == 0) {
-					curr.replace(curr.find(param.c_str()), param.size(), variables[n].c_str());
-					break;
+		for (int i = 0; i < new_params.size(); i++) {
+			if (curr.find(param.c_str(), 0, param.size()) != std::string::npos && param != "" && has_basket) {}
+			else if (curr.find(new_params[i].c_str(), 0, new_params[i].size()) != std::string::npos && new_params[i] != "") {
+				curr.replace(curr.find(new_params[i].c_str(), 0, new_params[i].size()), new_param.size(), param.c_str());
+				for (int n = 0; n < variables.size(); n++) {
+					if (strcmp(param.c_str(), variables[n].c_str()) == 0) {
+						int stop = curr.find(param.c_str(), 0, param.size());
+						while (stop < curr.size() && curr[stop] != ' ' && curr[stop] != '\0') stop++;
+						curr.replace(curr.find(param.c_str(), 0, param.size()), stop, variables[n].c_str());
+						break;
+					}
+				}
+				new_param = "";
+			}
+			else if ((curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos && new_param != "") && param != "") {
+				for (int n = 0; n < variables.size(); n++) {
+					if (strcmp(param.c_str(), variables[n].c_str()) == 0) {
+						curr.replace(curr.find(param.c_str(), 0, param.size()), param.size(), variables[n].c_str());
+						break;
+					}
 				}
 			}
 		}
