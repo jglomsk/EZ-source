@@ -124,7 +124,7 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 				else if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
 																variables, values, baskets, count, problem, true);
 			}
-			else if (im_this == "2var") {
+			else if (im_this == "2var" && variables[p] == thing) {
 				values[p] = to_string(beg--);
 				if (beg > end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
 																						variables, values, baskets, count, problem, true, 0, param);
@@ -151,7 +151,7 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 				else if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
 																variables, values, baskets, count, problem, true);
 			}
-			else if (im_this == "2var") {
+			else if (im_this == "2var" && variables[p] == thing) {
 				values[p] = to_string(beg++);
 				if (beg < end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
 																						variables, values, baskets, count, problem, true, 0, param);
@@ -532,34 +532,30 @@ void Main::translate(const char* file, // the file itself
 		std::getline(fp, curr);
 		newlinesnum++;
 		bool has_basket = false;
+		bool done_now = false;
 		if (curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos &&
 					new_param != "" && !baskets.empty()) {
 			for (int n = 0; n < baskets.size(); n++) {
-				if (param == baskets[n][0].getsdata()) {
+				if (param == baskets[n][0].getsdata() && curr.find((param + " ").c_str(), 0, param.size() + 1) != std::string::npos) {
 					curr.replace(curr.find(new_param.c_str(), 0, new_param.size()), new_param.size(),
 						baskets[n][0].getsdata());
 					has_basket = true;
+					done_now = true;
 				}
 			}
 		}
-		else if (curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos && new_param != "") {
-			for (int n = 0; n < new_params.size() && n < variables.size(); n++) {
-				if (new_params[n] == variables[n] && new_params[n] != "") {
-					curr.replace(curr.find(new_param.c_str(), 0, new_param.size()), new_param.size(), new_params[n].c_str());
-				}
-			}
+		if (curr.find("wp", 0, 2) != std::string::npos && param != "" && in_func &&
+				curr.find((param + " ").c_str()) != std::string::npos) has_param_nest = true;
+		if (new_param != "" && curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos) {
+			curr.replace(curr.find(new_param.c_str(), 0, new_param.size()), new_param.size(), param.c_str());
 		}
-		else if (curr.find(param.c_str(), 0, param.size()) != std::string::npos && param != "") {
-			for (int n = 0; n < variables.size(); n++) {
-				if (param == variables[n] && param != "") curr.replace(curr.find(param.c_str(), 0, param.size()) - 1, param.size(), variables[n].c_str());
-			}
-		}
-		else if (param != "" && curr.find("wp") != std::string::npos) {
-			has_param_nest = true;
+		else if (param != "" && curr.find("wp") != std::string::npos && !done_now && !has_param_nest) {
 			int p = curr.find("wp") + 2;
 			while (curr[p] == ' ') p++;
+			std::string old_param = "";
 			if (new_param == "") for (; curr[p] != ' ' && curr[p] != '\0' && curr[p] != '\n'; p++) new_param += curr[p];
-			else {
+			else if (new_param != "" && curr.find(new_param.c_str()) == std::string::npos) {
+				old_param = new_param.c_str();
 				new_param = "";
 				for (; curr[p] != ' ' && curr[p] != '\0' && curr[p] != '\n'; p++) new_param += curr[p];
 			}
@@ -569,30 +565,15 @@ void Main::translate(const char* file, // the file itself
 			if (std::find(new_params.begin(), new_params.end(), new_param) == new_params.end() || new_params.size() == 0) {
 				new_params.push_back(new_param);
 			}
-			if (new_params.size() == 1) curr.replace(p - new_param.size(), p, param.c_str());
-			else curr.replace(p - new_param.size(), p, param.c_str());
-		}
-		for (int i = 0; i < new_params.size(); i++) {
-			if (curr.find(param.c_str(), 0, param.size()) != std::string::npos && param != "" && has_basket) {}
-			else if (curr.find(new_params[i].c_str(), 0, new_params[i].size()) != std::string::npos && new_params[i] != "") {
-				curr.replace(curr.find(new_params[i].c_str(), 0, new_params[i].size()), new_param.size(), param.c_str());
-				for (int n = 0; n < variables.size(); n++) {
-					if (strcmp(param.c_str(), variables[n].c_str()) == 0) {
-						int stop = curr.find(param.c_str(), 0, param.size());
-						while (stop < curr.size() && curr[stop] != ' ' && curr[stop] != '\0') stop++;
-						curr.replace(curr.find(param.c_str(), 0, param.size()), stop, variables[n].c_str());
-						break;
-					}
-				}
-				new_param = "";
+			if (!has_param_nest && (curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos && new_param != "")) {
+				if (newlinesnum <= 1) curr.replace(p - new_param.size(), p, param.c_str());
+				else new_param = old_param.c_str();
 			}
-			else if ((curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos && new_param != "") && param != "") {
-				for (int n = 0; n < variables.size(); n++) {
-					if (strcmp(param.c_str(), variables[n].c_str()) == 0) {
-						curr.replace(curr.find(param.c_str(), 0, param.size()), param.size(), variables[n].c_str());
-						break;
-					}
-				}
+		}
+		if (curr.find(param.c_str(), 0, param.size()) != std::string::npos && param != "" && has_basket) {}
+		else if (curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos && new_param != "" && param != "") {
+			if (!has_param_nest && newlinesnum <= 1) {
+				curr.replace(curr.find(new_param.c_str(), 0, new_param.size()), new_param.size(), param.c_str());
 			}
 		}
 		entire_file.push_back(curr);
@@ -1004,6 +985,7 @@ void Main::translate(const char* file, // the file itself
 						else if (cond_sign == '!') tof = (std::atoi(values[a].c_str()) != std::atoi(values[b].c_str()));
 						beg = std::atoi(values[a].c_str());
 						end = std::atoi(values[b].c_str());
+						thing = variables[a];
 						im_this = "2var";
 					}
 				}
@@ -1267,41 +1249,55 @@ void Main::translate(const char* file, // the file itself
 											u += thing[m];
 										}
 										for (int m = 0; m < variables.size(); m++) {
-											if (u.find(variables[m].c_str()) != std::string::npos) {
+											if (u.find(variables[m].c_str()) != std::string::npos && variables[m] != "") {
 												found_it = m;
 												break;
 											}
 										}
-										if ((found_it > -1 && std::atoi(values[found_it].c_str()) > baskets.size()) ||
-											std::atoi(u.c_str()) > baskets.size() + 1) {
+										std::string new_new = "";
+										bool formula = false;
+										if (found_it > -1) {
+											for (int m = 0; m < u.size(); m++) {
+												for (int n = 1; n < variables.size(); n++) {
+													if (u.find(variables[n].c_str(), m) != std::string::npos && variables[n] != "") {
+														new_new += values[n].c_str();
+														break;
+													}
+													else if (std::find(variables.begin(), variables.end(), u) != variables.end()) {
+														new_new += values[std::distance(variables.begin(),
+																														std::find(variables.begin(), variables.end(), u))].c_str();
+														break;
+													}
+													else if (u.find_first_of("+-/*^") != std::string::npos && variables[n] == "") {
+														new_new += u[m];
+														break;
+													}
+												}
+											}
+											formula = true;
+										}
+										else new_new = u.c_str();
+										if (pemdas(new_new, problem) > baskets.size() + 1) {
 											std::cout << "You are trying to access part of a basket that does not exist yet.\n";
 											std::cout << "The program will now exit.\n";
 											std::cout << "Error code: m3m0ry\n";
 											end_n_del(funcs, problem);
 											endp(30, flush);
 										}
-										std::string new_new = "";
-										bool formula = false;
-										if (found_it > -1) {
-											for (int m = 0; m < u.size(); m++) {
-												if (u.find(variables[m].c_str(), m) != std::string::npos &&
-													variables[m] != "") {
-													new_new += values[m].c_str();
-												}
-												else {
-													new_new += u[m];
-												}
+										if (formula && found_it > -1 && new_thing == baskets[y][0].getsdata() && new_thing != "") {
+											if (baskets[y][pemdas(new_new, problem) + 1] != "") {
+												std::cout << baskets[y][pemdas(new_new, problem) + 1] << '\n';
 											}
-											formula = true;
 										}
-										if (formula && found_it > -1 && new_thing == baskets[y][0].getsdata()){
-											std::cout << baskets[y][pemdas(new_new, problem) + 1] << '\n';
+										else if (found_it > -1 && new_thing == baskets[y][0].getsdata() && new_thing != "") {
+											if (baskets[y][std::atoi(values[found_it].c_str()) + 1] != "") {
+												std::cout << baskets[y][std::atoi(values[found_it].c_str()) + 1] << '\n';
+											}
 										}
-										else if (found_it > -1 && new_thing == baskets[y][0].getsdata()) {
-											std::cout << baskets[y][std::atoi(values[found_it].c_str()) + 1] << '\n';
-										}
-										else if (new_thing == baskets[y][0].getsdata()) {
-											std::cout << baskets[y][std::atoi(u.c_str()) + 1] << '\n';
+										else if (new_thing == baskets[y][0].getsdata() && new_thing != "") {
+											if (baskets[y][std::atoi(u.c_str()) + 1] != "") {
+												std::cout << baskets[y][std::atoi(u.c_str()) + 1] << '\n';
+											}
 										}
 									}
 									else if (y == baskets.size() - 1) {

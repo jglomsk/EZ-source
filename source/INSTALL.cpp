@@ -54,9 +54,10 @@ int main(int argc, char** argv)
 		system("copy \"sauce.ez\" \"C:\\Program Files\\EZ\" && del \"sauce.ez\"");
 		system("copy \"all.ez\" \"C:\\Program Files\\EZ\" && del \"all.ez\"");
 		system("copy \"class.ez\" \"C:\\Program Files\\EZ\" && del \"class.ez\"");
+		system("copy \"basketeer.ez\" \"C:\\Program Files\\EZ\" && del \"basketeer.ez\"");
 		system("del \"ez.mac\" && del \"ezr.mac\"");
 		system("del \"ez.out\" && del \"ezr.out\"");
-		system("del \"install.out\" && del\"install.mac\"");
+		system("del \"install.out\" && del \"install.mac\"");
 		DelMe();
   }
 	#else
@@ -76,6 +77,7 @@ int main(int argc, char** argv)
 		system("sudo cp sauce.ez /usr/local/share/ez/ && sudo rm -rf sauce.ez");
 		system("sudo cp all.ez /usr/local/share/ez/ && sudo rm -rf all.ez");
 		system("sudo cp class.ez /usr/local/share/ez/ && sudo rm -rf class.ez");
+		system("sudo cp basketeer.ez /usr/local/share/ez/ && sudo rm -rf basketeer.ez");
 		system("sudo rm -rf ez.exe");
 		system("sudo rm -rf ezr.exe");
 		system("sudo rm -rf install.exe");

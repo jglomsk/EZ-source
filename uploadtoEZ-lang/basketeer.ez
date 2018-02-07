@@ -1,0 +1,13 @@
+make basketeer do wp single_basket
+	make reverse_print do wp length
+		while length > 0
+			show single_basket[length - 1]
+		done
+	done
+	make print_basket do wp length
+		set y to 0
+		while y < length
+			show single_basket[y]
+		done
+	done
+done

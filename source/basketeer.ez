@@ -11,9 +11,3 @@ make basketeer do wp single_basket
 		done
 	done
 done
-set i to basket
-push hello into i
-push 82 into i
-call basketeer wp i
-set x to 2
-call print_basket wp x
