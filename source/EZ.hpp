@@ -22,34 +22,47 @@
 #include <sstream>
 #include "mere.hpp"
 #ifdef _WIN32
-	#define PLATFORM 1
+	#define PLATFORM 1 // 1 = Windows format for import files (C:\Program Files\EZ\)
 #else
-	#define PLATFORM 2
+	#define PLATFORM 2 // 2 = Mac/Linux format for import files (/usr/local/share/ez/)
 #endif
 #define to_string( x ) static_cast< std::ostringstream & >( \
 	( std::ostringstream() << std::dec << x ) ).str()
+// the entire program
 class Main {
+private:
+	// variables
+	std::vector<std::string> new_params; // *NEW* feature allowing people to make parameters for functions
+	bool tof; // for true or false
 public:
+	// the below variables MUST BE PUBLIC
+	std::vector<std::string> funcs; // need this for function tracking and file deleting at the end
+	int flush; // for input
+	int line_count; // for future use (may want to start using this for checking pos in file)
+	// functions
 	Main();
-	std::vector<std::string> funcs; // need this for function keeping and file deleting at the end
-	std::vector<std::string> new_params;
-	bool tof;
-	int flush;
-	int line_count;
-	void end_n_del(std::vector<std::string> vals, int line_count = 100);
-	float pemdas(std::string thing, int line);
+	void end_n_del(std::vector<std::string> vals, int line_count = 100); // deletes all the files we translated
+	float pemdas(std::string thing, int line); // returns a float of an equation in string form
 	void translate(const char* file, // the file itself
-								 std::vector<std::string>& vars, // the variables that are global
-								 std::vector<std::string>& vals, // the values to those variables
-								 std::vector<std::vector<var> >& baskets,
-								 int& co, int wya = 0, bool in_func = false, int nested = 0, std::string param = "");
-	void while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables,
-											 std::vector<std::string>& values, std::vector<std::vector<var> >& baskets,
-											 int k, int i, int& count, int problem, std::string im_this,
-											 std::vector<std::string> entire_file, std::string thing, int comment_limit = 0,
-											 std::string param = "");
-};
-// does the while loop keyword
+								std::vector<std::string>& vars, // the variables that are global
+								std::vector<std::string>& vals, // the values to those variables
+								std::vector<std::vector<var> >& baskets, // baskets are global
+								int& co, // count for amount of vars
+								int wya = 0, // where you at file pos
+								bool in_func = false, // is true if we are in an ez func
+								int nested = 0, // how many funcs inside a func deep are we?
+								std::string param = ""); // new parameter for each func
+	void while_loop_guts(float beg, float end, // beginning and end of ez while loop
+											int newlinesnum, // used for determining how long the file is
+											std::vector<std::string>& variables, std::vector<std::string>& values, // variables and values
+											std::vector<std::vector<var> >& baskets, // baskets
+											int k, int i, int& count, // positions of file and count of vars
+											int problem, std::string im_this, // problem area and what exactly the loop is looking at
+											std::vector<std::string> entire_file, // the entire file
+											std::string thing, int comment_limit = 0, // the actual equation (x < 8) and the limit of the usable area
+											std::string param = ""); // possible parameters
+}; // thank whatever deity above that's over
+// does the while loop keyword, check class Main for meanings of params
 void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables,
 													std::vector<std::string>& values, std::vector<std::vector<var> >& baskets,
 													int k, int i, int& count, int problem, std::string im_this, std::vector<std::string> entire_file,
@@ -513,11 +526,8 @@ float Main::pemdas(std::string thing, int line)
 	return curr_ans;
 }
 // the head honcho of the program
-void Main::translate(const char* file, // the file itself
-							std::vector<std::string>& variables, // the variables that are global
-							std::vector<std::string>& values, // the values to those variables
-							std::vector<std::vector<var> >& baskets,
-							int& count, int wya, bool in_func, int nested, std::string param) // co = count of variables, wya = where is the program
+void Main::translate(const char* file, std::vector<std::string>& variables, std::vector<std::string>& values,
+							std::vector<std::vector<var> >& baskets, int& count, int wya, bool in_func, int nested, std::string param)
 {
 	std::ifstream fp(file);
 	std::vector<std::string> entire_file;
@@ -1277,7 +1287,7 @@ void Main::translate(const char* file, // the file itself
 											formula = true;
 										}
 										else new_new = u.c_str();
-										if (pemdas(new_new, problem) > baskets.size() + 1) {
+										if (pemdas(new_new, problem) + 1 > baskets[y].size() - 1) {
 											std::cout << "You are trying to access part of a basket that does not exist yet.\n";
 											std::cout << "The program will now exit.\n";
 											std::cout << "Error code: m3m0ry\n";
@@ -1285,7 +1295,10 @@ void Main::translate(const char* file, // the file itself
 											endp(30, flush);
 										}
 										if (formula && found_it > -1 && new_thing == baskets[y][0].getsdata() && new_thing != "") {
-											if (baskets[y][pemdas(new_new, problem) + 1] != "") {
+											if (baskets[y][pemdas(new_new, problem) + 1] != 0) {
+												std::cout << baskets[y][pemdas(new_new, problem) + 1] << '\n';
+											}
+											else if (baskets[y][pemdas(new_new, problem) + 1] != "") {
 												std::cout << baskets[y][pemdas(new_new, problem) + 1] << '\n';
 											}
 										}
