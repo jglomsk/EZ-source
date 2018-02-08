@@ -62,6 +62,12 @@ You can now make classes. Check class.ez for examples.
 <br/>
 Classes are simply made just like functions, but they can hold other functions and variables inside.
 <br/>
+Parameters for functions are here!
+<br/>
+Simply make a function, then next to the function declaration type `wp param_name` (e.g. `make my_func do wp param`).
+<br/>
+This will allow you to execute a function with a specific variable. See basketeer.ez for examples.
+<br/>
 Showing a variable inside of a formula is not supported in this version of EZ (e.g. `show x + 2`).
 <br/>
 One line if else statements are not supported in this version of EZ (e.g. `if x > 1 stuff done else stuff done`).
