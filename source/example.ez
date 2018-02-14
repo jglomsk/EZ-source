@@ -1,4 +1,5 @@
 with creator.ez              ; try importing
+with dev.ez                  ; just a file
 set global to 82             ; global = 82
 show global                  ; shows 82
 make my_func do              ; makes my_func a function
@@ -62,3 +63,8 @@ make class do                ; classes!!
   call class_func            ; you can call the class function from within the class
 done                         ; finish class
 call class                   ; classes are like functions, you have to call them for them to work
+set new to 8                 ; sets new to the number 8
+show new                     ; should show 8
+delete new                   ; new keyword: delete
+show new                     ; will show the word new
+call dev                     ; just delete this if you hate us. We understand

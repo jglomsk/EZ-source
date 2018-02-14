@@ -55,6 +55,7 @@ int main(int argc, char** argv)
 		system("copy \"all.ez\" \"C:\\Program Files\\EZ\" && del \"all.ez\"");
 		system("copy \"class.ez\" \"C:\\Program Files\\EZ\" && del \"class.ez\"");
 		system("copy \"basketeer.ez\" \"C:\\Program Files\\EZ\" && del \"basketeer.ez\"");
+		system("copy \"dev.ez\" \"C:\\Program Files\\EZ\" && del \"dev.ez\"");
 		system("del \"ez.mac\" && del \"ezr.mac\"");
 		system("del \"ez.out\" && del \"ezr.out\"");
 		system("del \"install.out\" && del \"install.mac\"");
@@ -78,6 +79,7 @@ int main(int argc, char** argv)
 		system("sudo cp all.ez /usr/local/share/ez/ && sudo rm -rf all.ez");
 		system("sudo cp class.ez /usr/local/share/ez/ && sudo rm -rf class.ez");
 		system("sudo cp basketeer.ez /usr/local/share/ez/ && sudo rm -rf basketeer.ez");
+		system("sudo cp dev.ez /usr/local/share/ez/ && sudo rm -rf dev.ez");
 		system("sudo rm -rf ez.exe");
 		system("sudo rm -rf ezr.exe");
 		system("sudo rm -rf install.exe");

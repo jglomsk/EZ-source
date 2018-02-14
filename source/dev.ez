@@ -1,0 +1,14 @@
+make dev do
+  show Feel like being a dev?  ; do you?
+  show Email the address below ; do it, you won't
+  show realezlang@gmail.com    ; that's our email!
+  show Email us with subject:  ; still there?
+  show Dev maybe?              ; the subject of the email you should send us
+  show We'll email back ASAP!  ; we really will!
+  show Please include your:    ; onto the next one!
+  show known languages         ; like python, C++, or even EZ!
+  show skills                  ; stuff like flattening arrays, making classes, or even file manip!
+  show education and last math ; we really like to know who we are recruiting. Nothing you tell us will get you cut
+  show anything you wanna say  ; provide us feedback!
+  show That's all!             ; have a good day!
+done

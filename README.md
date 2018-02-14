@@ -68,6 +68,8 @@ Simply make a function, then next to the function declaration type `wp param_nam
 <br/>
 This will allow you to execute a function with a specific variable. See basketeer.ez for examples.
 <br/>
+The keyword delete will delete a variable. See example.ez for more.
+<br/>
 Showing a variable inside of a formula is not supported in this version of EZ (e.g. `show x + 2`).
 <br/>
 One line if else statements are not supported in this version of EZ (e.g. `if x > 1 stuff done else stuff done`).
