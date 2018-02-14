@@ -125,6 +125,12 @@ Another alternative (FOR MAC/LINUX ONLY):
 	1. WARNING!!! This command will ask for an admin password. If you are not an admin, simply do not use this method. Instead, use the original method or the first alternative.
 4. Now you can change directory to wherever you want and simply type `ez <ez_file.ez>` replacing `<ez_file.ez>` with the name of your ez file, followed by the Enter key. Do not include the carets (<>) in the name.
 
+Yet another alternative (FOR WINDOWS 10 USERS ONLY):
+<br/>
+1. Open the location of your ez file and the interpreter (e.g. Downloads).
+2. Click the blue File button in the top left of the File Explorer window.
+3. Click "Open Windows Powershell" while in the directory.
+4. Type the following, replacing `your_file` with your ez file: `.\ez.exe .\your_file.ez`
 ## Known Bugs
 
 1. You may have to change the permissions on the interpreter file.

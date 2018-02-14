@@ -192,6 +192,7 @@ void Main::end_n_del(std::vector<std::string> values, int lines)
 		remove(std::string("else" + to_string(i)).c_str());
 		remove(std::string("if" + to_string(i)).c_str());
 		remove(std::string("while" + to_string(i)).c_str());
+		remove(std::string("conditional" + to_string(i)).c_str());
 	}
 }
 // turns a string equation into a real float
