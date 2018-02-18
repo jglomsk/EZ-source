@@ -9,18 +9,15 @@
  * P.S. the line above this one is a sticker on my laptop.
  */
 #pragma once
+#include <algorithm>
 #include <iostream>
 #include <cstdlib>
-#include <algorithm>
 #include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
-#include <cctype>
-#include <cstring>
 #include <cstdio>
-#include <cstring>
-#include <sstream>
-#include "mere.hpp"
+#include "VAR.hpp"
 #ifdef _WIN32
 	#define PLATFORM 1 // 1 = Windows format for import files (C:\Program Files\EZ\)
 #else
@@ -596,7 +593,7 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 	fp.close();
 	// begin big loop
 	for (int i = 0; i < newlinesnum; i++) {
-		if (in_func) problem = abs(wya - (newlinesnum - i) + 1) + 1;
+		if (in_func) problem = abs(wya - (newlinesnum - i));
 		else problem = i + 1;
 		int comment_limit = 0;
 		if (entire_file[i].find(';') != std::string::npos) comment_limit = entire_file[i].find(';');
