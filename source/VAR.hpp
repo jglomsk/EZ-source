@@ -1,4 +1,4 @@
-/* This file contains everything  related.
+/* This file contains everything var related.
  * It is meant to cause less hassle with EZ.hpp.
  * Lots of things break, but we plan on fixing them.
  * In the meantime, use this file for EZ.hpp.
