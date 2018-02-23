@@ -67,4 +67,12 @@ set new to 8                 ; sets new to the number 8
 show new                     ; should show 8
 delete new                   ; new keyword: delete
 show new                     ; will show the word new
+show x                       ; shows all of x
+show Deleting x[1]...        ; warn the user
+delete x[1]                  ; you can now delete elements in baskets
+show Now this is the new x:  ; warn the user again
+show x                       ; should have a different amount of values
+show Deleting x...           ; warn the user
+delete x                     ; deletes the entire basket
+show x                       ; should show the letter x
 call dev                     ; just delete this if you hate us. We understand

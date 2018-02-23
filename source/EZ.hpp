@@ -652,18 +652,66 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			int k = entire_file[i].find("delete") + 6;
 			while (entire_file[i][k] == ' ') k++;
 			std::string to_del = "";
-			for (; entire_file[i][k] != ' ' && entire_file[i][k] != '\0'; k++) {
+			bool work = false;
+			for (; k < comment_limit && entire_file[i][k] != '\0' &&
+					 entire_file[i][k] != ' ' && entire_file[i][k] != '['; k++) {
 				to_del += entire_file[i][k];
 			}
-			if (std::find(variables.begin(), variables.end(), to_del) == variables.end()) {
+			if (entire_file[i].find("[") != std::string::npos) {
+				int start = entire_file[i].find('[') + 1;
+				int end = entire_file[i].find(']');
+				std::string place = "";
+				if (end == std::string::npos) {
+					std::cout << "Missing end bracket on line " << problem << ".\n";
+					std::cout << "The program will now exit.\n";
+					std::cout << "Error code: 3ndbr4ck3t\n";
+					end_n_del(funcs, problem);
+					endp(343);
+				}
+				while (start < end) {
+					place += entire_file[i][start];
+					start++;
+				}
+				for (int g = 0; g < variables.size(); g++) {
+					if (place.find(variables[g].c_str(), 0, variables[g].size()) != std::string::npos &&
+							variables[g] != "") {
+						place.replace(place.find(variables[g].c_str()), variables[g].size(), values[g].c_str());
+					}
+				}
+				for (int g = 0; g < baskets.size(); g++) {
+					if (to_del == baskets[g][0].getsdata()) {
+						for (int p = pemdas(place, problem) + 1; p < baskets[g].size() - 1; p++) {
+							baskets[g][p] = baskets[g][p + 1];
+						}
+						baskets[g].pop_back();
+					}
+				}
+				work = true;
+			}
+			else {
+				if (!baskets.empty()) {
+					for (int p = 0; p < baskets.size(); p++) {
+						if (to_del == baskets[p][0].getsdata()) {
+							for (int y = p; y < baskets.size() - 1; y++) {
+								baskets[y] = baskets[y + 1];
+							}
+							work = true;
+							baskets.pop_back();
+						}
+					}
+				}
+				if (!work) {
+					int here = std::distance(variables.begin(), std::find(variables.begin(), variables.end(), to_del));
+					variables[here] = "";
+					values[here] = "";
+					work = true;
+				}
+			}
+			if (std::find(variables.begin(), variables.end(), to_del) == variables.end() && !work) {
 				std::cout << "You tried deleting a nonexistent variable on line " << problem << ".\n";
 				std::cout << "The program will now exit.\nError code n0n3x1573n7\n";
 				end_n_del(funcs, problem);
 				endp(0315737);
-			} else {
-				int here = std::distance(variables.begin(), std::find(variables.begin(), variables.end(), to_del));
-				variables[here] = "";
-				values[here] = "";
 			}
 		}
 		// keyword if
