@@ -553,11 +553,9 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			}
 		}
 		if (curr.find("wp", 0, 2) != std::string::npos && param != "" && in_func &&
-				curr.find((param + " ").c_str()) != std::string::npos) has_param_nest = true;
-		if (new_param != "" && curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos) {
-			curr.replace(curr.find(new_param.c_str(), 0, new_param.size()), new_param.size(), param.c_str());
-		}
-		else if (param != "" && curr.find("wp") != std::string::npos && !done_now && !has_param_nest) {
+				curr.find((param + " ").c_str()) == std::string::npos) has_param_nest = true;
+		if (param != "" && curr.find("wp") != std::string::npos && !done_now &&
+				(!has_param_nest || (has_param_nest && entire_file.size() < 1))) {
 			int p = curr.find("wp") + 2;
 			while (curr[p] == ' ') p++;
 			std::string old_param = "";
@@ -577,6 +575,9 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 				if (newlinesnum <= 1) curr.replace(p - new_param.size(), p, param.c_str());
 				else new_param = old_param.c_str();
 			}
+		}
+		if (new_param != "" && curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos) {
+			curr.replace(curr.find(new_param.c_str(), 0, new_param.size()), new_param.size(), param.c_str());
 		}
 		if (curr.find(param.c_str(), 0, param.size()) != std::string::npos && param != "" && has_basket) {}
 		else if (curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos && new_param != "" && param != "") {
@@ -1260,7 +1261,7 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 					std::vector<std::string> varTemp = variables;
 					std::vector<std::string> valTemp = values;
 					if (param != "") {
-						translate(funcs[j].c_str(), varTemp, valTemp, baskets, count, problem, true, nest, param);
+						translate(funcs[j].c_str(), variables, values, baskets, count, problem, true, nest, param);
 					}
 					else {
 						translate(funcs[j].c_str(), varTemp, valTemp, baskets, count, problem, true);
