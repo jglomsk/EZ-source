@@ -5,9 +5,9 @@ make basketeer do wp single_basket    ; inits a class with a parameter
 		done                              ; finish while loop
 	done                                ; finish reverse_print
 	make print_basket do wp length      ; prints a basket up until length
-		set y to 0                        ; sets our initial 0
-		while y < length                  ; while 0 < length
-			show single_basket[y]           ; shows the Yth element
+		set _y to 0                       ; sets our initial 0
+		while _y < length                 ; while 0 < length
+			show single_basket[_y]           ; shows the Yth element
 		done                              ; finish while loop
 	done                                ; finish print_basket
 done                                  ; finish basketeer

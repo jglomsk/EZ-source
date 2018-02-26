@@ -1,5 +1,5 @@
 /* Welcome to the EZ language!
- * Documentation is in the ReadMe.txt
+ * Documentation is in the README.md
  * This file will be commented out as much as possible.
  * The purpose of the comments is to help the CREATORS of the program. Not you.
  * Just kidding, if you want to follow along you can.
@@ -40,64 +40,75 @@ public:
 	Main();
 	void end_n_del(std::vector<std::string> vals, int line_count = 100); // deletes all the files we translated
 	float pemdas(std::string thing, int line); // returns a float of an equation in string form
-	void translate(const char* file, // the file itself
-								std::vector<std::string>& vars, // the variables that are global
-								std::vector<std::string>& vals, // the values to those variables
-								std::vector<std::vector<var> >& baskets, // baskets are global
-								int& co, // count for amount of vars
-								int wya = 0, // where you at file pos
-								bool in_func = false, // is true if we are in an ez func
-								int nested = 0, // how many funcs inside a func deep are we?
-								std::string param = ""); // new parameter for each func
-	void while_loop_guts(float beg, float end, // beginning and end of ez while loop
-											int newlinesnum, // used for determining how long the file is
-											std::vector<std::string>& variables, std::vector<std::string>& values, // variables and values
-											std::vector<std::vector<var> >& baskets, // baskets
-											int k, int i, int& count, // positions of file and count of vars
-											int problem, std::string im_this, // problem area and what exactly the loop is looking at
-											std::vector<std::string> entire_file, // the entire file
-											std::string thing, int comment_limit = 0, // the actual equation (x < 8) and the limit of the usable area
-											std::string param = ""); // possible parameters
+	void translate(
+		const char* file, // the file itself
+		std::vector<std::string>& vars, // the variables that are global
+		std::vector<std::string>& vals, // the values to those variables
+		std::vector<std::vector<var> >& baskets, // baskets are global
+		int& co, // count for amount of vars
+		int wya = 0, // where you at file pos
+		bool in_func = false, // is true if we are in an ez func
+		int nested = 0, // how many funcs inside a func deep are we?
+		std::string param = "" // new parameter for each func
+	);
+	void while_loop_guts(
+		float beg, float end, // beginning and end of ez while loop
+		int newlinesnum, // used for determining how long the file is
+		std::vector<std::string>& variables, std::vector<std::string>& values, // variables and values
+		std::vector<std::vector<var> >& baskets, // baskets
+		int k, int i, int& count, // positions of file and count of vars
+		int problem, std::string im_this, // problem area and what exactly the loop is looking at
+		std::vector<std::string> entire_file, // the entire file
+		std::string thing, int comment_limit = 0, // the actual equation (x < 8) and the limit of the usable area
+		std::string param = "" // possible parameters
+	);
 }; // thank whatever deity above that's over
-// does the while loop keyword, check class Main for meanings of params
-void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<std::string>& variables,
-													std::vector<std::string>& values, std::vector<std::vector<var> >& baskets,
-													int k, int i, int& count, int problem, std::string im_this, std::vector<std::string> entire_file,
-													std::string thing, int comment_limit, std::string param)
-{
+// does the while loop, check class Main for meanings of params
+void Main::while_loop_guts(
+	float beg, float end, int newlinesnum, std::vector<std::string>& variables,
+	std::vector<std::string>& values, std::vector<std::vector<var> >& baskets,
+	int k, int i, int& count, int problem, std::string im_this, std::vector<std::string> entire_file,
+	std::string thing, int comment_limit, std::string param
+) {
 	int nest = 0;
 	std::ofstream do_me_hard;
 	bool has_param = false;
 	do_me_hard.open(std::string("conditional" + to_string(problem)).c_str());
 	for (int j = k + 1;; j++) {
-		if ((entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
-				(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
-				(entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
-				(entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)) nest++;
-		else if (entire_file[i].find("done", j - 1) != std::string::npos && nest > 0 &&
-						entire_file[i].find("done", j - 1) < comment_limit &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("call")) {
+		if (
+			(entire_file[i].find("while", j - 1) != std::string::npos && entire_file[i].find("while", j - 1) < comment_limit) ||
+			(entire_file[i].find("if", j - 1) != std::string::npos && entire_file[i].find("if", j - 1) < comment_limit) ||
+			(entire_file[i].find("else", j - 1) != std::string::npos && entire_file[i].find("else", j - 1) < comment_limit) ||
+			(entire_file[i].find("make", j - 1) != std::string::npos && entire_file[i].find("make", j - 1) < comment_limit)
+		) nest++;
+		else if (
+			entire_file[i].find("done", j - 1) != std::string::npos && nest > 0 &&
+			entire_file[i].find("done", j - 1) < comment_limit &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("call")
+		) {
 			nest--;
 			do_me_hard << "done\n";
 		}
-		else if (entire_file[i].find("done", j - 1) < comment_limit &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
-						entire_file[i].find("done", j - 1) < entire_file[i].find("call") && nest <= 0) break;
+		else if (
+			entire_file[i].find("done", j - 1) < comment_limit &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
+			entire_file[i].find("done", j - 1) < entire_file[i].find("call") && nest <= 0
+		) break;
 		else if (i == newlinesnum) {
 			std::cout << "Your conditional did not have a \"done\" statement before the end of the file.\n";
 			std::cout << "The failed conditional started on line " << problem << ". The program will now exit.\n";
@@ -121,25 +132,37 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x > 8
 				values[p] = to_string(beg--);
-				if (beg > end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
-																						variables, values, baskets, count, problem, true, 0, param);
-				else if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
-																variables, values, baskets, count, problem, true);
+				if (beg > end && has_param) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true, 0, param
+				);
+				else if (beg > end) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true
+				);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg--;
-				if (beg > end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
-																						variables, values, baskets, count, problem, true, 0, param);
-				else if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
-																variables, values, baskets, count, problem, true);
+				if (beg > end && has_param) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true, 0, param
+				);
+				else if (beg > end) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true
+				);
 			}
 			else if (im_this == "2var" && variables[p] == thing) {
 				values[p] = to_string(beg--);
-				if (beg > end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
-																						variables, values, baskets, count, problem, true, 0, param);
-				else if (beg > end) translate(std::string("conditional" + to_string(problem)).c_str(),
-																variables, values, baskets, count, problem, true);
+				if (beg > end && has_param) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true, 0, param
+				);
+				else if (beg > end) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true
+				);
 				break;
 			}
 		}
@@ -148,25 +171,37 @@ void Main::while_loop_guts(float beg, float end, int newlinesnum, std::vector<st
 		for (int p = 0; p < variables.size(); p++) {
 			if (im_this[3] == '1' && variables[p] == thing) { // x < 8
 				values[p] = to_string(beg++);
-				if (beg < end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
-																						variables, values, baskets, count, problem, true, 0, param);
-				else if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
-																variables, values, baskets, count, problem, true);
+				if (beg < end && has_param) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true, 0, param
+				);
+				else if (beg < end) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true
+				);
 				break;
 			}
 			else if (im_this == "var2") { // 8 < x
 				beg++;
-				if (beg < end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
-																						variables, values, baskets, count, problem, true, 0, param);
-				else if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
-																variables, values, baskets, count, problem, true);
+				if (beg < end && has_param) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true, 0, param
+				);
+				else if (beg < end) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true
+				);
 			}
 			else if (im_this == "2var" && variables[p] == thing) {
 				values[p] = to_string(beg++);
-				if (beg < end && has_param) translate(std::string("conditional" + to_string(problem)).c_str(),
-																						variables, values, baskets, count, problem, true, 0, param);
-				else if (beg < end) translate(std::string("conditional" + to_string(problem)).c_str(),
-																variables, values, baskets, count, problem, true);
+				if (beg < end && has_param) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true, 0, param
+				);
+				else if (beg < end) translate(
+					std::string("conditional" + to_string(problem)).c_str(),
+					variables, values, baskets, count, problem, true
+				);
 				break;
 			}
 		}
@@ -238,8 +273,10 @@ float Main::pemdas(std::string thing, int line)
 			new_string += ')';
 			paren_loc_end = j;
 		}
-		else if (thing.find('^', expo_loc + stuck) != std::string::npos && (thing.find('^', expo_loc) + stuck < paren_loc_beg ||
-			thing.find('^', expo_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", expo_loc) != std::string::npos) {
+		else if (
+			thing.find('^', expo_loc + stuck) != std::string::npos && (thing.find('^', expo_loc) + stuck < paren_loc_beg ||
+			thing.find('^', expo_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", expo_loc) != std::string::npos
+		) {
 			int j = thing.find('^', expo_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -277,8 +314,10 @@ float Main::pemdas(std::string thing, int line)
 			}
 			expo_loc = j + 1;
 		}
-		else if (thing.find('*', mult_loc + stuck) != std::string::npos && (thing.find('*', mult_loc) + stuck < paren_loc_beg || 
-			thing.find('*', mult_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", mult_loc) != std::string::npos) {
+		else if (
+			thing.find('*', mult_loc + stuck) != std::string::npos && (thing.find('*', mult_loc) + stuck < paren_loc_beg || 
+			thing.find('*', mult_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", mult_loc) != std::string::npos
+		) {
 			int j = thing.find('*', mult_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -316,8 +355,10 @@ float Main::pemdas(std::string thing, int line)
 			}
 			mult_loc = j + 1;
 		}
-		else if (thing.find('/', div_loc + stuck) != std::string::npos && (thing.find('/', div_loc) + stuck < paren_loc_beg ||
-			thing.find('/', div_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", div_loc) != std::string::npos) {
+		else if (
+			thing.find('/', div_loc + stuck) != std::string::npos && (thing.find('/', div_loc) + stuck < paren_loc_beg ||
+			thing.find('/', div_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", div_loc) != std::string::npos
+		) {
 			int j = thing.find('/', div_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -355,8 +396,10 @@ float Main::pemdas(std::string thing, int line)
 			}
 			div_loc = j + 1;
 		}
-		else if (thing.find('+', plus_loc + stuck) != std::string::npos && (thing.find('+', plus_loc) + stuck < paren_loc_beg ||
-			thing.find('+', plus_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", plus_loc) != std::string::npos) {
+		else if (
+			thing.find('+', plus_loc + stuck) != std::string::npos && (thing.find('+', plus_loc) + stuck < paren_loc_beg ||
+			thing.find('+', plus_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", plus_loc) != std::string::npos
+		) {
 			int j = thing.find('+', plus_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -394,8 +437,10 @@ float Main::pemdas(std::string thing, int line)
 			}
 			plus_loc = j + 1;
 		}
-		else if (thing.find('-', min_loc + stuck) != std::string::npos && (thing.find('-', min_loc) + stuck < paren_loc_beg ||
-			thing.find('-', min_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", min_loc) != std::string::npos) {
+		else if (
+			thing.find('-', min_loc + stuck) != std::string::npos && (thing.find('-', min_loc) + stuck < paren_loc_beg ||
+			thing.find('-', min_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", min_loc) != std::string::npos
+		) {
 			int j = thing.find('-', min_loc + stuck);
 			if (j < paren_loc_beg) {
 				for (; j > -1; j--) {
@@ -439,12 +484,14 @@ float Main::pemdas(std::string thing, int line)
 			for (int i = 0; i < stop_here; i++) wo_comments += thing[i];
 			break;
 		}
-		else if (thing.find_first_of("1234567890", min_loc) == std::string::npos ||
+		else if (
+			thing.find_first_of("1234567890", min_loc) == std::string::npos ||
 			thing.find_first_of("1234567890", plus_loc) == std::string::npos ||
 			thing.find_first_of("1234567890", mult_loc) == std::string::npos ||
 			thing.find_first_of("1234567890", div_loc) == std::string::npos ||
 			thing.find_first_of("1234567890", expo_loc) == std::string::npos ||
-			thing.find_first_of("1234567890", paren_loc_beg) == std::string::npos) {
+			thing.find_first_of("1234567890", paren_loc_beg) == std::string::npos
+		) {
 			std::cout << "You failed to do something in the formula on line " << line << ".\n";
 			std::cout << "Check the formula, maybe you forgot to type a number somewhere.\n";
 			std::cout << "The program will now exit.\nError code: num83r\n";
@@ -474,11 +521,13 @@ float Main::pemdas(std::string thing, int line)
 		if ((isdigit(wo_comments[i]) || wo_comments[i] == '.') && now_switch == false) {
 			x += wo_comments[i];
 		}
-		else if (wo_comments[i] == '^' ||
+		else if (
+			wo_comments[i] == '^' ||
 			wo_comments[i] == '*' ||
 			wo_comments[i] == '+' ||
 			wo_comments[i] == '/' ||
-			wo_comments[i] == '-') {
+			wo_comments[i] == '-'
+		) {
 			if (curr_ans && y != "") {
 				curr_ans = Math::calc(curr_ans, sign, ::atof(y.c_str()));
 			}
@@ -524,9 +573,10 @@ float Main::pemdas(std::string thing, int line)
 	return curr_ans;
 }
 // the head honcho of the program
-void Main::translate(const char* file, std::vector<std::string>& variables, std::vector<std::string>& values,
-							std::vector<std::vector<var> >& baskets, int& count, int wya, bool in_func, int nested, std::string param)
-{
+void Main::translate(
+	const char* file, std::vector<std::string>& variables, std::vector<std::string>& values,
+	std::vector<std::vector<var> >& baskets, int& count, int wya, bool in_func, int nested, std::string param
+) {
 	std::ifstream fp(file);
 	std::vector<std::string> entire_file;
 	int newlinesnum = 0;
@@ -541,8 +591,10 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 		newlinesnum++;
 		bool has_basket = false;
 		bool done_now = false;
-		if (curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos &&
-					new_param != "" && !baskets.empty()) {
+		if (
+			curr.find(new_param.c_str(), 0, new_param.size()) != std::string::npos &&
+			new_param != "" && !baskets.empty()
+		) {
 			for (int n = 0; n < baskets.size(); n++) {
 				if (param == baskets[n][0].getsdata() && curr.find((param + " ").c_str(), 0, param.size() + 1) != std::string::npos) {
 					curr.replace(curr.find(new_param.c_str(), 0, new_param.size()), new_param.size(),
@@ -552,10 +604,14 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 				}
 			}
 		}
-		if (curr.find("wp", 0, 2) != std::string::npos && param != "" && in_func &&
-				curr.find((param + " ").c_str()) == std::string::npos) has_param_nest = true;
-		if (param != "" && curr.find("wp") != std::string::npos && !done_now &&
-				(!has_param_nest || (has_param_nest && entire_file.size() < 1))) {
+		if (
+			curr.find("wp", 0, 2) != std::string::npos && param != "" && in_func &&
+			curr.find((param + " ").c_str()) == std::string::npos
+		) has_param_nest = true;
+		if (
+			param != "" && curr.find("wp") != std::string::npos && !done_now &&
+			(!has_param_nest || (has_param_nest && entire_file.size() < 1))
+		) {
 			int p = curr.find("wp") + 2;
 			while (curr[p] == ' ') p++;
 			std::string old_param = "";
@@ -600,16 +656,18 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 		if (entire_file[i].find(';') != std::string::npos) comment_limit = entire_file[i].find(';');
 		else comment_limit = entire_file[i].size();
 		// keyword with
-		if (entire_file[i].find("with") != std::string::npos && entire_file[i].find("with") < comment_limit &&
-				entire_file[i].find("with") < entire_file[i].find("show") &&
-				entire_file[i].find("with") < entire_file[i].find("set") &&
-				entire_file[i].find("with") < entire_file[i].find("if") &&
-				entire_file[i].find("with") < entire_file[i].find("else") &&
-				entire_file[i].find("with") < entire_file[i].find("push") &&
-				entire_file[i].find("with") < entire_file[i].find("make") &&
-				entire_file[i].find("with") < entire_file[i].find("while") &&
-				entire_file[i].find("with") < entire_file[i].find("call") &&
-				entire_file[i].find("with") < entire_file[i].find("delete")) {
+		if (
+			entire_file[i].find("with") != std::string::npos && entire_file[i].find("with") < comment_limit &&
+			entire_file[i].find("with") < entire_file[i].find("show") &&
+			entire_file[i].find("with") < entire_file[i].find("set") &&
+			entire_file[i].find("with") < entire_file[i].find("if") &&
+			entire_file[i].find("with") < entire_file[i].find("else") &&
+			entire_file[i].find("with") < entire_file[i].find("push") &&
+			entire_file[i].find("with") < entire_file[i].find("make") &&
+			entire_file[i].find("with") < entire_file[i].find("while") &&
+			entire_file[i].find("with") < entire_file[i].find("call") &&
+			entire_file[i].find("with") < entire_file[i].find("delete")
+		) {
 			int k = entire_file[i].find("with") + 4;
 			while (entire_file[i][k] == ' ') k++;
 			std::string fp_add = "";
@@ -640,22 +698,26 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			}
 		}
 		// keyword delete
-		else if (entire_file[i].find("delete") != std::string::npos && entire_file[i].find("delete") < comment_limit &&
-				entire_file[i].find("delete") < entire_file[i].find("if") &&
-				entire_file[i].find("delete") < entire_file[i].find("show") &&
-				entire_file[i].find("delete") < entire_file[i].find("set") &&
-				entire_file[i].find("delete") < entire_file[i].find("else") &&
-				entire_file[i].find("delete") < entire_file[i].find("push") &&
-				entire_file[i].find("delete") < entire_file[i].find("while") &&
-				entire_file[i].find("delete") < entire_file[i].find("call") &&
-				entire_file[i].find("delete") < entire_file[i].find("make") &&
-				entire_file[i].find("delete") < entire_file[i].find("with")) {
+		else if (
+			entire_file[i].find("delete") != std::string::npos && entire_file[i].find("delete") < comment_limit &&
+			entire_file[i].find("delete") < entire_file[i].find("if") &&
+			entire_file[i].find("delete") < entire_file[i].find("show") &&
+			entire_file[i].find("delete") < entire_file[i].find("set") &&
+			entire_file[i].find("delete") < entire_file[i].find("else") &&
+			entire_file[i].find("delete") < entire_file[i].find("push") &&
+			entire_file[i].find("delete") < entire_file[i].find("while") &&
+			entire_file[i].find("delete") < entire_file[i].find("call") &&
+			entire_file[i].find("delete") < entire_file[i].find("make") &&
+			entire_file[i].find("delete") < entire_file[i].find("with")
+		) {
 			int k = entire_file[i].find("delete") + 6;
 			while (entire_file[i][k] == ' ') k++;
 			std::string to_del = "";
 			bool work = false;
-			for (; k < comment_limit && entire_file[i][k] != '\0' &&
-					 entire_file[i][k] != ' ' && entire_file[i][k] != '['; k++) {
+			for (
+				; k < comment_limit && entire_file[i][k] != '\0' &&
+				entire_file[i][k] != ' ' && entire_file[i][k] != '['; k++
+			) {
 				to_del += entire_file[i][k];
 			}
 			if (entire_file[i].find("[") != std::string::npos) {
@@ -674,8 +736,10 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 					start++;
 				}
 				for (int g = 0; g < variables.size(); g++) {
-					if (place.find(variables[g].c_str(), 0, variables[g].size()) != std::string::npos &&
-							variables[g] != "") {
+					if (
+						place.find(variables[g].c_str(), 0, variables[g].size()) != std::string::npos &&
+						variables[g] != ""
+					) {
 						place.replace(place.find(variables[g].c_str()), variables[g].size(), values[g].c_str());
 					}
 				}
@@ -716,16 +780,18 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			}
 		}
 		// keyword if
-		else if (entire_file[i].find("if") != std::string::npos && entire_file[i].find("if") < comment_limit &&
-				entire_file[i].find("if") < entire_file[i].find("show") &&
-				entire_file[i].find("if") < entire_file[i].find("set") &&
-				entire_file[i].find("if") < entire_file[i].find("else") &&
-				entire_file[i].find("if") < entire_file[i].find("push") &&
-				entire_file[i].find("if") < entire_file[i].find("while") &&
-				entire_file[i].find("if") < entire_file[i].find("call") &&
-				entire_file[i].find("if") < entire_file[i].find("make") &&
-				entire_file[i].find("if") < entire_file[i].find("with") &&
-				entire_file[i].find("if") < entire_file[i].find("delete")) {
+		else if (
+			entire_file[i].find("if") != std::string::npos && entire_file[i].find("if") < comment_limit &&
+			entire_file[i].find("if") < entire_file[i].find("show") &&
+			entire_file[i].find("if") < entire_file[i].find("set") &&
+			entire_file[i].find("if") < entire_file[i].find("else") &&
+			entire_file[i].find("if") < entire_file[i].find("push") &&
+			entire_file[i].find("if") < entire_file[i].find("while") &&
+			entire_file[i].find("if") < entire_file[i].find("call") &&
+			entire_file[i].find("if") < entire_file[i].find("make") &&
+			entire_file[i].find("if") < entire_file[i].find("with") &&
+			entire_file[i].find("if") < entire_file[i].find("delete")
+		) {
 			int k = entire_file[i].find("if") + 2;
 			while (entire_file[i][k] == ' ') k++;
 			std::string condition1 = "";
@@ -830,46 +896,54 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 							j = 0;
 							do_me_hard << '\n';
 						}
-						else if ((entire_file[i].find("while", j - 1) != std::string::npos &&
-											entire_file[i].find("while", j - 1) < comment_limit) ||
-											(entire_file[i].find("if", j - 1) != std::string::npos &&
-											entire_file[i].find("if", j - 1) < comment_limit) ||
-											(entire_file[i].find("else", j - 1) != std::string::npos &&
-											entire_file[i].find("else", j - 1) < comment_limit) ||
-											(entire_file[i].find("make", j - 1) != std::string::npos &&
-											entire_file[i].find("make", j - 1) < comment_limit)) nest++;
-						else if (entire_file[i].find("done", j - 1) != std::string::npos && nest > 0 &&
-										 entire_file[i].find("done", j - 1) < comment_limit &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("delete")) {
+						else if (
+							(entire_file[i].find("while", j - 1) != std::string::npos &&
+							entire_file[i].find("while", j - 1) < comment_limit) ||
+							(entire_file[i].find("if", j - 1) != std::string::npos &&
+							entire_file[i].find("if", j - 1) < comment_limit) ||
+							(entire_file[i].find("else", j - 1) != std::string::npos &&
+							entire_file[i].find("else", j - 1) < comment_limit) ||
+							(entire_file[i].find("make", j - 1) != std::string::npos &&
+							entire_file[i].find("make", j - 1) < comment_limit)
+						) nest++;
+						else if (
+							entire_file[i].find("done", j - 1) != std::string::npos && nest > 0 &&
+							entire_file[i].find("done", j - 1) < comment_limit &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("delete")
+						) {
 							nest--;
 							do_me_hard << "done\n";
 						}
-						else if (entire_file[i].find("done", j - 1) < comment_limit &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
-										 entire_file[i].find("done", j - 1) < entire_file[i].find("delete")) break;
+						else if (
+							entire_file[i].find("done", j - 1) < comment_limit &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
+							entire_file[i].find("done", j - 1) < entire_file[i].find("delete")
+						) break;
 						char put_me_in_coach = entire_file[i][j - 1];
 						do_me_hard << put_me_in_coach;
 					}
 					do_me_hard.close();
-					translate(std::string("conditional" + to_string(problem)).c_str(),
-										variables, values, baskets, count, problem, true, nest);
+					translate(
+						std::string("conditional" + to_string(problem)).c_str(),
+						variables, values, baskets, count, problem, true, nest
+					);
 					remove(std::string("conditional" + to_string(problem)).c_str());
 				}
 				else {
@@ -884,16 +958,18 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			}
 		}
 		// keyword else
-		else if (entire_file[i].find("else") != std::string::npos && entire_file[i].find("else") < comment_limit &&
-						entire_file[i].find("else") < entire_file[i].find("show") &&
-						entire_file[i].find("else") < entire_file[i].find("set") &&
-						entire_file[i].find("else") < entire_file[i].find("if") &&
-						entire_file[i].find("else") < entire_file[i].find("push") &&
-						entire_file[i].find("else") < entire_file[i].find("while") &&
-						entire_file[i].find("else") < entire_file[i].find("call") &&
-						entire_file[i].find("else") < entire_file[i].find("make") &&
-						entire_file[i].find("else") < entire_file[i].find("with") &&
-						entire_file[i].find("else") < entire_file[i].find("delete")) {
+		else if (
+			entire_file[i].find("else") != std::string::npos && entire_file[i].find("else") < comment_limit &&
+			entire_file[i].find("else") < entire_file[i].find("show") &&
+			entire_file[i].find("else") < entire_file[i].find("set") &&
+			entire_file[i].find("else") < entire_file[i].find("if") &&
+			entire_file[i].find("else") < entire_file[i].find("push") &&
+			entire_file[i].find("else") < entire_file[i].find("while") &&
+			entire_file[i].find("else") < entire_file[i].find("call") &&
+			entire_file[i].find("else") < entire_file[i].find("make") &&
+			entire_file[i].find("else") < entire_file[i].find("with") &&
+			entire_file[i].find("else") < entire_file[i].find("delete")
+		) {
 			if (!tof) {
 				int k = entire_file[i].find("else") + 4;
 				std::ofstream else_file;
@@ -905,40 +981,46 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 						j = 0;
 						else_file << '\n';
 					}
-					else if ((entire_file[i].find("while", j - 1) != std::string::npos &&
-										entire_file[i].find("while", j - 1) < comment_limit) ||
-										(entire_file[i].find("if", j - 1) != std::string::npos &&
-										entire_file[i].find("if", j - 1) < comment_limit) ||
-										(entire_file[i].find("else", j - 1) != std::string::npos &&
-										entire_file[i].find("else", j - 1) < comment_limit) ||
-										(entire_file[i].find("make", j - 1) != std::string::npos &&
-										entire_file[i].find("make", j - 1) < comment_limit)) nest++;
-					else if (entire_file[i].find("done", j - 1) != std::string::npos && nest > 0 &&
-									entire_file[i].find("done", j - 1) < comment_limit &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("delete")) {
+					else if (
+						(entire_file[i].find("while", j - 1) != std::string::npos &&
+						entire_file[i].find("while", j - 1) < comment_limit) ||
+						(entire_file[i].find("if", j - 1) != std::string::npos &&
+						entire_file[i].find("if", j - 1) < comment_limit) ||
+						(entire_file[i].find("else", j - 1) != std::string::npos &&
+						entire_file[i].find("else", j - 1) < comment_limit) ||
+						(entire_file[i].find("make", j - 1) != std::string::npos &&
+						entire_file[i].find("make", j - 1) < comment_limit)
+					) nest++;
+					else if (
+						entire_file[i].find("done", j - 1) != std::string::npos && nest > 0 &&
+						entire_file[i].find("done", j - 1) < comment_limit &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("delete")
+					) {
 						nest--;
 						else_file << "done\n";
 					}
-					else if (entire_file[i].find("done", j - 1) < comment_limit &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
-									entire_file[i].find("done", j - 1) < entire_file[i].find("delete")) break;
+					else if (
+						entire_file[i].find("done", j - 1) < comment_limit &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
+						entire_file[i].find("done", j - 1) < entire_file[i].find("delete")
+					) break;
 					char put_me_in_coach = entire_file[i][j - 1];
 					else_file << put_me_in_coach;
 				}
@@ -950,16 +1032,18 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			}
 		}
 		// keyword push
-		else if (entire_file[i].find("push") != std::string::npos && entire_file[i].find("push") < comment_limit &&
-						entire_file[i].find("push") < entire_file[i].find("show") &&
-						entire_file[i].find("push") < entire_file[i].find("set") &&
-						entire_file[i].find("push") < entire_file[i].find("if") &&
-						entire_file[i].find("push") < entire_file[i].find("else") &&
-						entire_file[i].find("push") < entire_file[i].find("while") &&
-						entire_file[i].find("push") < entire_file[i].find("call") &&
-						entire_file[i].find("push") < entire_file[i].find("make") &&
-						entire_file[i].find("push") < entire_file[i].find("with") &&
-						entire_file[i].find("push") < entire_file[i].find("delete")) {
+		else if (
+			entire_file[i].find("push") != std::string::npos && entire_file[i].find("push") < comment_limit &&
+			entire_file[i].find("push") < entire_file[i].find("show") &&
+			entire_file[i].find("push") < entire_file[i].find("set") &&
+			entire_file[i].find("push") < entire_file[i].find("if") &&
+			entire_file[i].find("push") < entire_file[i].find("else") &&
+			entire_file[i].find("push") < entire_file[i].find("while") &&
+			entire_file[i].find("push") < entire_file[i].find("call") &&
+			entire_file[i].find("push") < entire_file[i].find("make") &&
+			entire_file[i].find("push") < entire_file[i].find("with") &&
+			entire_file[i].find("push") < entire_file[i].find("delete")
+		) {
 			int k = entire_file[i].find("push") + 4;
 			while (entire_file[i][k] == ' ') k++;
 			std::string thing = "";
@@ -970,7 +1054,7 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			while (entire_file[i][k] == ' ') k++;
 			if (entire_file[i].find("into") != std::string::npos && entire_file[i].find("into") < comment_limit) k += 4;
 			else {
-				std::cout << "You did not include the keyword \"into\" in your push statement on line " << problem << ".\n";
+				std::cout << "You did not include the word \"into\" in your push statement on line " << problem << ".\n";
 				std::cout << "The program will now exit.\n";
 				std::cout << "Error code: 1n70\n";
 				end_n_del(funcs, problem);
@@ -1014,16 +1098,18 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			}
 		}
 		// keyword while
-		else if (entire_file[i].find("while") != std::string::npos && entire_file[i].find("while") < comment_limit &&
-						entire_file[i].find("while") < entire_file[i].find("show") &&
-						entire_file[i].find("while") < entire_file[i].find("set") &&
-						entire_file[i].find("while") < entire_file[i].find("if") &&
-						entire_file[i].find("while") < entire_file[i].find("else") &&
-						entire_file[i].find("while") < entire_file[i].find("push") &&
-						entire_file[i].find("while") < entire_file[i].find("call") &&
-						entire_file[i].find("while") < entire_file[i].find("make") &&
-						entire_file[i].find("while") < entire_file[i].find("with") &&
-						entire_file[i].find("while") < entire_file[i].find("delete")) {
+		else if (
+			entire_file[i].find("while") != std::string::npos && entire_file[i].find("while") < comment_limit &&
+			entire_file[i].find("while") < entire_file[i].find("show") &&
+			entire_file[i].find("while") < entire_file[i].find("set") &&
+			entire_file[i].find("while") < entire_file[i].find("if") &&
+			entire_file[i].find("while") < entire_file[i].find("else") &&
+			entire_file[i].find("while") < entire_file[i].find("push") &&
+			entire_file[i].find("while") < entire_file[i].find("call") &&
+			entire_file[i].find("while") < entire_file[i].find("make") &&
+			entire_file[i].find("while") < entire_file[i].find("with") &&
+			entire_file[i].find("while") < entire_file[i].find("delete")
+		) {
 			int k = entire_file[i].find("while") + 5;
 			std::string thing = "";
 			int beg = 0;
@@ -1042,10 +1128,12 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			for (; entire_file[i][k] != '\0' && entire_file[i][k] != ' ' && k < comment_limit; k++) {
 				condition2 += entire_file[i][k];
 			}
-			if (cond_sign == '>' ||
-					cond_sign == '<' ||
-					cond_sign == '=' ||
-					cond_sign == '!') {
+			if (
+				cond_sign == '>' ||
+				cond_sign == '<' ||
+				cond_sign == '=' ||
+				cond_sign == '!'
+			) {
 				if (isdigit(condition1[0]) && isdigit(condition2[0])) {
 					if (cond_sign == '>') tof = (std::atoi(condition1.c_str()) > std::atoi(condition2.c_str()));
 					else if (cond_sign == '<') tof = (std::atoi(condition1.c_str()) < std::atoi(condition2.c_str()));
@@ -1133,22 +1221,26 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 				}
 			}
 			if (tof) {
-				while_loop_guts(beg, end, newlinesnum, variables, values, baskets, k, i,
-												count, problem, im_this, entire_file, thing, comment_limit);
+				while_loop_guts(
+					beg, end, newlinesnum, variables, values, baskets, k, i,
+					count, problem, im_this, entire_file, thing, comment_limit
+				);
 				remove(std::string("conditional" + to_string(problem)).c_str());
 			}
 		}
 		// keyword make
-		else if (entire_file[i].find("make") != std::string::npos && entire_file[i].find("make") < comment_limit &&
-						entire_file[i].find("make") < entire_file[i].find("show") &&
-						entire_file[i].find("make") < entire_file[i].find("set") &&
-						entire_file[i].find("make") < entire_file[i].find("if") &&
-						entire_file[i].find("make") < entire_file[i].find("else") &&
-						entire_file[i].find("make") < entire_file[i].find("push") &&
-						entire_file[i].find("make") < entire_file[i].find("while") &&
-						entire_file[i].find("make") < entire_file[i].find("call") &&
-						entire_file[i].find("make") < entire_file[i].find("with") &&
-						entire_file[i].find("make") < entire_file[i].find("delete")) {
+		else if (
+			entire_file[i].find("make") != std::string::npos && entire_file[i].find("make") < comment_limit &&
+			entire_file[i].find("make") < entire_file[i].find("show") &&
+			entire_file[i].find("make") < entire_file[i].find("set") &&
+			entire_file[i].find("make") < entire_file[i].find("if") &&
+			entire_file[i].find("make") < entire_file[i].find("else") &&
+			entire_file[i].find("make") < entire_file[i].find("push") &&
+			entire_file[i].find("make") < entire_file[i].find("while") &&
+			entire_file[i].find("make") < entire_file[i].find("call") &&
+			entire_file[i].find("make") < entire_file[i].find("with") &&
+			entire_file[i].find("make") < entire_file[i].find("delete")
+		) {
 			int k = entire_file[i].find("make") + 4;
 			while (entire_file[i][k] == ' ') k++;
 			std::string func_name = "";
@@ -1169,8 +1261,10 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 					end_n_del(funcs, problem);
 					endp(603, flush);
 				}
-				else if (entire_file[i].find("call " + func_name + '\n') != std::string::npos ||
-								entire_file[i].find("call " + func_name + ' ') != std::string::npos) {
+				else if (
+					entire_file[i].find("call " + func_name + '\n') != std::string::npos ||
+					entire_file[i].find("call " + func_name + ' ') != std::string::npos
+				) {
 					std::cout << "You called a function before you finished making it on line " << problem << ".\n";
 					std::cout << "The program will now exit.\n";
 					std::cout << "Error code: c411d0n3\n";
@@ -1182,56 +1276,64 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 					j = 0;
 					func_file << '\n';
 				}
-				else if ((entire_file[i].find("while", j - 1) != std::string::npos &&
-								entire_file[i].find("while", j - 1) < comment_limit) ||
-								(entire_file[i].find("if", j - 1) != std::string::npos &&
-								entire_file[i].find("if", j - 1) < comment_limit) ||
-								(entire_file[i].find("else", j - 1) != std::string::npos &&
-								entire_file[i].find("else", j - 1) < comment_limit) ||
-								(entire_file[i].find("make", j - 1) != std::string::npos &&
-								entire_file[i].find("make", j - 1) < comment_limit)) nest++;
-				else if (entire_file[i].find("done", j - 1) != std::string::npos && nest > 0 &&
-								 entire_file[i].find("done", j - 1) < comment_limit &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("delete")) {
+				else if (
+					(entire_file[i].find("while", j - 1) != std::string::npos &&
+					entire_file[i].find("while", j - 1) < comment_limit) ||
+					(entire_file[i].find("if", j - 1) != std::string::npos &&
+					entire_file[i].find("if", j - 1) < comment_limit) ||
+					(entire_file[i].find("else", j - 1) != std::string::npos &&
+					entire_file[i].find("else", j - 1) < comment_limit) ||
+					(entire_file[i].find("make", j - 1) != std::string::npos &&
+					entire_file[i].find("make", j - 1) < comment_limit)
+				) nest++;
+				else if (
+					entire_file[i].find("done", j - 1) != std::string::npos && nest > 0 &&
+					entire_file[i].find("done", j - 1) < comment_limit &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("delete")
+				) {
 					nest--;
 					func_file << "done\n";
 				}
-				else if (entire_file[i].find("done", j - 1) < comment_limit &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
-								 entire_file[i].find("done", j - 1) < entire_file[i].find("delete")) break;
+				else if (
+					entire_file[i].find("done", j - 1) < comment_limit &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("show") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("set") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("if") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("else") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("push") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("make") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("with") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("while") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("call") &&
+					entire_file[i].find("done", j - 1) < entire_file[i].find("delete")
+				) break;
 				char put_me_in_coach = entire_file[i][j - 1];
 				func_file << put_me_in_coach;
 			}
 			func_file.close();
 		}
 		// keyword call
-		else if (entire_file[i].find("call") != std::string::npos && entire_file[i].find("call") < comment_limit &&
-						entire_file[i].find("call") < entire_file[i].find("show") &&
-						entire_file[i].find("call") < entire_file[i].find("set") &&
-						entire_file[i].find("call") < entire_file[i].find("if") &&
-						entire_file[i].find("call") < entire_file[i].find("else") &&
-						entire_file[i].find("call") < entire_file[i].find("push") &&
-						entire_file[i].find("call") < entire_file[i].find("make") &&
-						entire_file[i].find("call") < entire_file[i].find("while") &&
-						entire_file[i].find("call") < entire_file[i].find("with") &&
-						entire_file[i].find("call") < entire_file[i].find("delete")) {
+		else if (
+			entire_file[i].find("call") != std::string::npos && entire_file[i].find("call") < comment_limit &&
+			entire_file[i].find("call") < entire_file[i].find("show") &&
+			entire_file[i].find("call") < entire_file[i].find("set") &&
+			entire_file[i].find("call") < entire_file[i].find("if") &&
+			entire_file[i].find("call") < entire_file[i].find("else") &&
+			entire_file[i].find("call") < entire_file[i].find("push") &&
+			entire_file[i].find("call") < entire_file[i].find("make") &&
+			entire_file[i].find("call") < entire_file[i].find("while") &&
+			entire_file[i].find("call") < entire_file[i].find("with") &&
+			entire_file[i].find("call") < entire_file[i].find("delete")
+		) {
 			int k = entire_file[i].find("call") + 4;
 			int stop_here = 0;
 			if (entire_file[i].find(';') != std::string::npos) stop_here = entire_file[i].find(';');
@@ -1242,8 +1344,10 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			for (; k < stop_here && entire_file[i][k] != ' ' && entire_file[i][k] != '\0'; k++) {
 				call_name += entire_file[i][k];
 			}
-			if (entire_file[i][k] == ' ' && entire_file[i].find("wp", k) < stop_here &&
-					entire_file[i].find("wp", k) != std::string::npos) {
+			if (
+				entire_file[i][k] == ' ' && entire_file[i].find("wp", k) < stop_here &&
+				entire_file[i].find("wp", k) != std::string::npos
+			) {
 				k += (entire_file[i].find("wp", k) - k) + 2;
 				while (entire_file[i][k] == ' ') k++;
 				for (; k < stop_here && entire_file[i][k] != ' ' && entire_file[i][k] != '\0'; k++) {
@@ -1270,16 +1374,18 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			}
 		}
 		// keyword show
-		else if (entire_file[i].find("show") != std::string::npos && entire_file[i].find("show") < comment_limit &&
-						entire_file[i].find("show") < entire_file[i].find("set") &&
-						entire_file[i].find("show") < entire_file[i].find("if") &&
-						entire_file[i].find("show") < entire_file[i].find("else") &&
-						entire_file[i].find("show") < entire_file[i].find("push") &&
-						entire_file[i].find("show") < entire_file[i].find("call") &&
-						entire_file[i].find("show") < entire_file[i].find("make") &&
-						entire_file[i].find("show") < entire_file[i].find("while") &&
-						entire_file[i].find("show") < entire_file[i].find("with") &&
-						entire_file[i].find("show") < entire_file[i].find("delete")) {
+		else if (
+			entire_file[i].find("show") != std::string::npos && entire_file[i].find("show") < comment_limit &&
+			entire_file[i].find("show") < entire_file[i].find("set") &&
+			entire_file[i].find("show") < entire_file[i].find("if") &&
+			entire_file[i].find("show") < entire_file[i].find("else") &&
+			entire_file[i].find("show") < entire_file[i].find("push") &&
+			entire_file[i].find("show") < entire_file[i].find("call") &&
+			entire_file[i].find("show") < entire_file[i].find("make") &&
+			entire_file[i].find("show") < entire_file[i].find("while") &&
+			entire_file[i].find("show") < entire_file[i].find("with") &&
+			entire_file[i].find("show") < entire_file[i].find("delete")
+		) {
 			int k = entire_file[i].find("show") + 4;
 			int stop_here = 0;
 			if (entire_file[i].find(';') != std::string::npos) stop_here = entire_file[i].find(';');
@@ -1316,12 +1422,15 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 								}
 								thing += ']';
 							}
-							if (entire_file[i].find_first_of(
-								"1234567890-=qwertyuiop\\asdfghjkl'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
-								here + 1) < stop_here &&
-							entire_file[i].find_first_of(
-								"1234567890-=qwertyuiop\\asdfghjkl'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
-								here + 1) != std::string::npos) not_done = true;
+							if (
+								entire_file[i].find_first_of(
+									"1234567890-=qwertyuiop\\asdfghjkl'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
+									here + 1
+								) < stop_here &&
+								entire_file[i].find_first_of(
+									"1234567890-=qwertyuiop\\asdfghjkl'zxcvbnm,./~!@#$%^&*()_+QWERTYUIOP{}|ASDFGHJKL:\"ZXCVBNM<>?",
+									here + 1
+								) != std::string::npos) not_done = true;
 							if (thing == variables[p] && !not_done) {
 								std::cout << values[p];
 								std::cout << '\n';
@@ -1363,8 +1472,9 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 														break;
 													}
 													else if (std::find(variables.begin(), variables.end(), u) != variables.end()) {
-														new_new += values[std::distance(variables.begin(),
-																														std::find(variables.begin(), variables.end(), u))].c_str();
+														new_new += values[
+															std::distance(variables.begin(), std::find(variables.begin(), variables.end(), u))
+														].c_str();
 														break;
 													}
 													else if (u.find_first_of("+-/*^") != std::string::npos && variables[n] == "") {
@@ -1433,16 +1543,18 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 			}
 		}
 		// keyword set
-		else if (entire_file[i].find("set") != std::string::npos && entire_file[i].find("set") < comment_limit &&
-						entire_file[i].find("set") < entire_file[i].find("show") &&
-						entire_file[i].find("set") < entire_file[i].find("if") &&
-						entire_file[i].find("set") < entire_file[i].find("else") &&
-						entire_file[i].find("set") < entire_file[i].find("push") &&
-						entire_file[i].find("set") < entire_file[i].find("call") &&
-						entire_file[i].find("set") < entire_file[i].find("make") &&
-						entire_file[i].find("set") < entire_file[i].find("while") &&
-						entire_file[i].find("set") < entire_file[i].find("with") &&
-						entire_file[i].find("set") < entire_file[i].find("delete")) {
+		else if (
+			entire_file[i].find("set") != std::string::npos && entire_file[i].find("set") < comment_limit &&
+			entire_file[i].find("set") < entire_file[i].find("show") &&
+			entire_file[i].find("set") < entire_file[i].find("if") &&
+			entire_file[i].find("set") < entire_file[i].find("else") &&
+			entire_file[i].find("set") < entire_file[i].find("push") &&
+			entire_file[i].find("set") < entire_file[i].find("call") &&
+			entire_file[i].find("set") < entire_file[i].find("make") &&
+			entire_file[i].find("set") < entire_file[i].find("while") &&
+			entire_file[i].find("set") < entire_file[i].find("with") &&
+			entire_file[i].find("set") < entire_file[i].find("delete")
+		) {
 			try {
 				int k = entire_file[i].find("set") + 3;
 				int stop_here = 0;
@@ -1522,7 +1634,7 @@ void Main::translate(const char* file, std::vector<std::string>& variables, std:
 					}
 				}
 			}
-			catch (int& e) { // catch from keyword set
+			catch (int& e) { // catch from set
 				std::cout << "Your variable failed on line " << problem << ". Did you set a value to it?\n";
 				std::cout << "The program will now exit.\n";
 				std::cout << "Error code: " << e << std::endl;

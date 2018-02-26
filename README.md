@@ -131,6 +131,7 @@ Yet another alternative (FOR WINDOWS 10 USERS ONLY):
 2. Click the blue File button in the top left of the File Explorer window.
 3. Click "Open Windows Powershell" while in the directory.
 4. Type the following, replacing `your_file` with your ez file: `.\ez.exe .\your_file.ez`
+
 ## Known Bugs
 
 1. You may have to change the permissions on the interpreter file.
