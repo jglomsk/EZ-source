@@ -1467,8 +1467,9 @@ var& var::operator=(const var& rhs)
 		lldata = 0;
 	}
 	else if (rhs.getsdata()) {
-		sdata = new char[len(rhs.getsdata())];
+		sdata = new char[len(rhs.getsdata()) + 1];
 		for (int i = 0; i < len(rhs.getsdata()); i++) sdata[i] = rhs.getsdata()[i];
+		sdata[len(rhs.getsdata())] = '\0';
 		ddata = 0;
 		fdata = 0;
 		ldata = 0;

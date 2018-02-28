@@ -10,13 +10,9 @@
  */
 #pragma once
 #include <algorithm>
-#include <iostream>
-#include <cstdlib>
 #include <fstream>
 #include <sstream>
 #include <vector>
-#include <string>
-#include <cstdio>
 #include "VAR.hpp"
 #ifdef _WIN32
 	#define PLATFORM 1 // 1 = Windows format for import files (C:\Program Files\EZ\)
@@ -643,10 +639,6 @@ void Main::translate(
 		}
 		entire_file.push_back(curr);
 	}
-	// limit for entire program
-	for (int p = 0; p < entire_file.size(); p++) {
-		if (entire_file[p] == "\0") newlinesnum--;
-	}
 	fp.close();
 	// begin big loop
 	for (int i = 0; i < newlinesnum; i++) {
@@ -735,6 +727,10 @@ void Main::translate(
 					place += entire_file[i][start];
 					start++;
 				}
+				if (place == "") {
+					std::cout << "You didn't specify a basket element on line " << problem << ".\n";
+					std::cout << "Instead of exiting, the first element in the basket will be deleted.\n";
+				}
 				for (int g = 0; g < variables.size(); g++) {
 					if (
 						place.find(variables[g].c_str(), 0, variables[g].size()) != std::string::npos &&
@@ -745,6 +741,10 @@ void Main::translate(
 				}
 				for (int g = 0; g < baskets.size(); g++) {
 					if (to_del == baskets[g][0].getsdata()) {
+						if (std::atoi(place.c_str()) > baskets[g].size()) {
+							std::cout << "You attempted to delete a nonexistent basket element on line " << problem << ".\n";
+							std::cout << "Instead of exiting, the last element in the basket will be deleted.\n";
+						}
 						for (int p = pemdas(place, problem) + 1; p < baskets[g].size() - 1; p++) {
 							baskets[g][p] = baskets[g][p + 1];
 						}
@@ -1061,7 +1061,7 @@ void Main::translate(
 				endp(170, flush);
 			}
 			while (entire_file[i][k] == ' ' && k < comment_limit) k++;
-			if (entire_file[i][k] == ';') {
+			if (entire_file[i][k] == ';' || entire_file[i][k] == '\0') {
 				std::cout << \
 					"You did not specify a basket to add to and/or did not specify something to push into a basket on line " << \
 					problem << ".\n";
@@ -1073,8 +1073,12 @@ void Main::translate(
 				basket_im_adding_to += entire_file[i][k];
 			}
 			for (int e = 0;; e++) {
-				if (!baskets.empty() == true) {
-					if (basket_im_adding_to == baskets[e][0].getsdata()) {
+				if (!baskets.empty()) {
+					if (e == baskets.size()) {
+						std::cout << "You failed to push something into the basket on line " << problem << ".\n";
+						break;
+					}
+					else if (basket_im_adding_to == baskets[e][0].getsdata()) {
 						if (isdigit(thing.c_str()[0])) baskets[e].push_back(var(std::atoi(thing.c_str())));
 						else {
 							for (int y = 0;; y++) {
@@ -1088,10 +1092,6 @@ void Main::translate(
 								}
 							}
 						}
-						break;
-					}
-					else if (e == baskets.size()) {
-						std::cout << "You failed to push something into the basket on line " << problem << ".\n";
 						break;
 					}
 				}
@@ -1416,9 +1416,13 @@ void Main::translate(
 								here = e + 1;
 							}
 							if (entire_file[i][here] == '[') {
-								for (int e = here; entire_file[i][e] != ']'; e++) {
+								for (int e = here; entire_file[i][e] != ']' && e < stop_here; e++) {
 									thing += entire_file[i][e];
 									here = e;
+								}
+								if (entire_file[i][here + 1] != ']') {
+									std::cout << "Missing ending bracket on line " << problem << ".\n";
+									std::cout << "The program will continue. Be careful next time.\n";
 								}
 								thing += ']';
 							}
@@ -1435,10 +1439,11 @@ void Main::translate(
 								std::cout << values[p];
 								std::cout << '\n';
 								break;
+								break;
 							}
 							else if (!not_done && !baskets.empty()) {
 								bool done = false;
-								for (int y = 0; y < baskets.size(); y++) {
+								for (int y = 0; y < baskets.size() && !done; y++) {
 									if (baskets[y][0].getsdata() == thing && thing.find('[') == std::string::npos) {
 										for (int m = 1; m < baskets[y].size(); m++) std::cout << (m - 1) << ": " << baskets[y][m] << '\n';
 										done = true;
@@ -1496,19 +1501,23 @@ void Main::translate(
 										if (formula && found_it > -1 && new_thing == baskets[y][0].getsdata() && new_thing != "") {
 											if (baskets[y][pemdas(new_new, problem) + 1] != 0) {
 												std::cout << baskets[y][pemdas(new_new, problem) + 1] << '\n';
+												done = true;
 											}
 											else if (baskets[y][pemdas(new_new, problem) + 1] != "") {
 												std::cout << baskets[y][pemdas(new_new, problem) + 1] << '\n';
+												done = true;
 											}
 										}
 										else if (found_it > -1 && new_thing == baskets[y][0].getsdata() && new_thing != "") {
 											if (baskets[y][std::atoi(values[found_it].c_str()) + 1] != "") {
 												std::cout << baskets[y][std::atoi(values[found_it].c_str()) + 1] << '\n';
+												done = true;
 											}
 										}
 										else if (new_thing == baskets[y][0].getsdata() && new_thing != "") {
 											if (baskets[y][std::atoi(u.c_str()) + 1] != "") {
 												std::cout << baskets[y][std::atoi(u.c_str()) + 1] << '\n';
+												done = true;
 											}
 										}
 									}
@@ -1641,6 +1650,11 @@ void Main::translate(
 				end_n_del(funcs, problem);
 				endp(e, flush);
 			}
+		}
+		// catch everything that isn't a word we support
+		else if (entire_file[i] != "") {
+			std::cout << "You didn't write a specific keyword on line " << problem << ".\n";
+			std::cout << "The program will continue, just be more careful next time.\n";
 		}
 		line_count = i;
 	}
