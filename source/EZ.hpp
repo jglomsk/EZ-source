@@ -14,11 +14,6 @@
 #include <sstream>
 #include <vector>
 #include "VAR.hpp"
-#ifdef _WIN32
-	#define PLATFORM 1 // 1 = Windows format for import files (C:\Program Files\EZ\)
-#else
-	#define PLATFORM 2 // 2 = Mac/Linux format for import files (/usr/local/share/ez/)
-#endif
 #define to_string( x ) static_cast< std::ostringstream & >( \
 	( std::ostringstream() << std::dec << x ) ).str()
 // the entire program
@@ -647,6 +642,10 @@ void Main::translate(
 		int comment_limit = 0;
 		if (entire_file[i].find(';') != std::string::npos) comment_limit = entire_file[i].find(';');
 		else comment_limit = entire_file[i].size();
+		if (count >= variables.size() || count >= values.size()) {
+			variables.push_back("");
+			values.push_back("");
+		}
 		// keyword with
 		if (
 			entire_file[i].find("with") != std::string::npos && entire_file[i].find("with") < comment_limit &&
@@ -671,22 +670,9 @@ void Main::translate(
 				if (fp_test) translate(fp_add.c_str(), variables, values, baskets, count, problem);
 				else throw 107;
 			} catch (...) {
-				try {
-					std::string fp_copy = "";
-					if (PLATFORM == 1) {
-						fp_copy = std::string("C:\\Program Files\\EZ\\") + fp_add;
-					}
-					else if (PLATFORM == 2) {
-						fp_copy = std::string("/usr/local/share/ez/") + fp_add;
-					}
-					std::ifstream fp_test(fp_copy.c_str());
-					if (fp_test) translate(fp_copy.c_str(), variables, values, baskets, count, problem);
-					else throw 107;
-				} catch (...) {
-					std::cout << "Import Error.\nCheck your import file and make sure you typed the correct file name.\n";
-					end_n_del(funcs, problem);
-					endp(107, flush);
-				}
+				std::cout << "Import Error.\nCheck your import file and make sure you typed the correct file name.\n";
+				end_n_del(funcs, problem);
+				endp(107, flush);
 			}
 		}
 		// keyword delete
@@ -1406,7 +1392,7 @@ void Main::translate(
 					std::cout << '\n';
 				}
 				else {
-					for (int p = 0;; p++) {
+					for (int p = 0; p < variables.size(); p++) {
 						if (entire_file[i][k] == variables[p][0] || count == p) {
 							std::string thing = "";
 							bool not_done = false;
@@ -1633,12 +1619,13 @@ void Main::translate(
 									push_me.push_back(variables[count].c_str());
 									values[count] = "";
 									variables[count] = "";
+									count--;
 									baskets.push_back(push_me);
 								}
 							} else throw 537;
 						}
-						copy_k = k;
 						count++;
+						copy_k = k;
 						break;
 					}
 				}
@@ -1650,11 +1637,6 @@ void Main::translate(
 				end_n_del(funcs, problem);
 				endp(e, flush);
 			}
-		}
-		// catch everything that isn't a word we support
-		else if (entire_file[i] != "") {
-			std::cout << "You didn't write a specific keyword on line " << problem << ".\n";
-			std::cout << "The program will continue, just be more careful next time.\n";
 		}
 		line_count = i;
 	}
