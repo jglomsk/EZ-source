@@ -2,8 +2,8 @@
 int main()
 {
 	std::string answer = "";
-	std::vector<std::string> values(20);
-	std::vector<std::string> variables(20);
+	std::vector<std::string> values;
+	std::vector<std::string> variables;
 	std::vector<std::vector<var> > baskets;
 	int count = 0;
 	Main x;
