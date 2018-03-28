@@ -1384,10 +1384,15 @@ void Main::translate(
 			else stop_here = entire_file[i].size();
 			while (entire_file[i][k] == ' ') k++;
 			while (entire_file[i][k] != '\n') {
-				if (isdigit(entire_file[i][k])) {
+				if (entire_file[i].find_first_of("1234567890") != std::string::npos) {
 					std::string thing = "";
 					for (int a = k; a < stop_here; a++) {
 						thing += entire_file[i][a];
+					}
+					for (int a = 0; a < variables.size(); a++) {
+						while (thing.find(variables[a].c_str(), 0, variables[a].size()) != std::string::npos && variables[a] != "") {
+							thing.replace(thing.find(variables[a].c_str()), variables[a].size(), values[a].c_str());
+						}
 					}
 					std::cout << pemdas(thing, problem) << '\n';
 				}
@@ -1577,12 +1582,18 @@ void Main::translate(
 				int copy_k = k;
 				for (int j = 0;; j++) {
 					if (variables[j] == variable) {
-						if (isdigit(entire_file[i].at(copy_k))) {
+						if (entire_file[i].find_first_of("1234567890") != std::string::npos) {
 							std::string thing = "";
 							for (int a = copy_k; a < stop_here; a++) {
 								thing += entire_file[i][a];
 							}
+							for (int a = 0; a < variables.size(); a++) {
+								while (thing.find(variables[a].c_str(), 0, variables[a].size()) != std::string::npos && variables[a] != "") {
+									thing.replace(thing.find(variables[a].c_str()), variables[a].size(), values[a].c_str());
+								}
+							}
 							values[j] = to_string(pemdas(thing, problem));
+							break;
 						}
 						else {
 							if (copy_k < stop_here) {
@@ -1606,10 +1617,15 @@ void Main::translate(
 					}
 					else if (j >= variables.size() - 1) {
 						variables[count] = variable;
-						if (isdigit(entire_file[i].at(copy_k))) {
+						if (entire_file[i].find_first_of("1234567890") != std::string::npos) {
 							std::string thing = "";
 							for (int a = copy_k; a < stop_here; a++) {
 								thing += entire_file[i][a];
+							}
+							for (int a = 0; a < variables.size(); a++) {
+								while (thing.find(variables[a].c_str(), 0, variables[a].size()) != std::string::npos && variables[a] != "") {
+									thing.replace(thing.find(variables[a].c_str()), variables[a].size(), values[a].c_str());
+								}
 							}
 							values[count] = to_string(pemdas(thing, problem));
 						}
