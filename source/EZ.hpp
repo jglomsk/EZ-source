@@ -247,6 +247,17 @@ float Main::pemdas(std::string thing, int line)
 		wo_spaces.find('-') == std::string::npos) {
 		return ::atof(wo_spaces.c_str()); // return the number if no equation symbol was given
 	}
+	if (
+		wo_spaces.find_first_of(
+				"qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM"
+			) != std::string::npos
+		) {
+		std::cout << "Something went wrong on line " << line << ".\n";
+		std::cout << "Maybe you had a letter instead of a number?\n";
+		std::cout << "The program will now exit.\nError code: l3tt3r\n";
+		end_n_del(funcs, line);
+		endp(33);
+	}
 	thing = wo_spaces;
 	/* WARNING: DO NOT, and I repeat, DO NOT delete ANY of this section!!
 	 * It is perfect and bug free. You do not need to understand it AT ALL.
@@ -255,7 +266,7 @@ float Main::pemdas(std::string thing, int line)
 	 * begin confusion
 	 */
 	while (true) {
-		if (thing.find('(', paren_loc_beg) != std::string::npos) {
+		if (thing.find('(', paren_loc_beg) != std::string::npos && thing.find(')', paren_loc_beg) != std::string::npos) {
 			int j = thing.find('(', paren_loc_beg) + paren_loc_beg;
 			paren_loc_beg += j + 1;
 			for (; j < thing.size() && thing[j] != ')'; ++j) {
@@ -264,43 +275,38 @@ float Main::pemdas(std::string thing, int line)
 			new_string += ')';
 			paren_loc_end = j;
 		}
+		else if (thing.find('(', paren_loc_beg) != std::string::npos && thing.find(')', paren_loc_beg) == std::string::npos) {
+			std::cout << "Missing end parentheses on line " << line << ".\n";
+			std::cout << "The program will now exit.\nError code: 3nd\n";
+			end_n_del(funcs, line);
+			endp(3, flush);
+		}
 		else if (
 			thing.find('^', expo_loc + stuck) != std::string::npos && (thing.find('^', expo_loc) + stuck < paren_loc_beg ||
 			thing.find('^', expo_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", expo_loc) != std::string::npos
 		) {
 			int j = thing.find('^', expo_loc + stuck);
 			if (j < paren_loc_beg) {
+				std::string new_new = "";
 				for (; j > -1; j--) {
-					if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '^') != false) {
-						new_string += thing[j];
+					if ((isdigit(thing[j]) || thing[j] == '.') != false) {
+						new_new += thing[j];
 					}
 				}
 				j++;
 				while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '^' || thing[j] == '.')) j++;
+				new_string += '^';
+				std::reverse(new_new.begin(), new_new.end());
+				new_string += new_new;
 			}
 			else {
-				if (j >= paren_loc_beg - 1) {
+				while (
+					j >= 1 && thing[j - 1] != '-' && thing[j - 1] != '+' && thing[j - 1] != '*' &&
+					thing[j - 1] != '/' && thing[j - 1] != '^' && thing[j - 1] != ')'
+				) j--;
+				while (j > paren_loc_end - 1 && thing[j] != '(' && j < thing.size()) {
+					new_string += thing[j];
 					j++;
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '^') != true || j <= 0) {
-							break;
-						}
-					}
-					if (thing.find('(') != std::string::npos) j++;
-					else if (thing[j] != '^' && !isdigit(thing[j])) j++;
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '.' || thing[j] == '^')) {
-						new_string += thing[j];
-						j++;
-					}
-				}
-				else {
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '^') != false) {
-							new_string += thing[j];
-						}
-						if (j <= 0) break;
-					}
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '^' || thing[j] == '.')) j++;
 				}
 			}
 			expo_loc = j + 1;
@@ -311,37 +317,26 @@ float Main::pemdas(std::string thing, int line)
 		) {
 			int j = thing.find('*', mult_loc + stuck);
 			if (j < paren_loc_beg) {
+				std::string new_new = "";
 				for (; j > -1; j--) {
-					if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] =='*') != false) {
-						new_string += thing[j];
+					if ((isdigit(thing[j]) || thing[j] == '.') != false) {
+						new_new += thing[j];
 					}
 				}
 				j++;
 				while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '*' || thing[j] == '.')) j++;
+				new_string += '*';
+				std::reverse(new_new.begin(), new_new.end());
+				new_string += new_new;
 			}
 			else {
-				if (j >= paren_loc_beg - 1) {
+				while (
+					j >= 1 && thing[j - 1] != '-' && thing[j - 1] != '+' && thing[j - 1] != '*' &&
+					thing[j - 1] != '/' && thing[j - 1] != '^' && thing[j - 1] != ')'
+				) j--;
+				while (j > paren_loc_end - 1 && thing[j] != '(' && j < thing.size()) {
+					new_string += thing[j];
 					j++;
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '*') != true || j <= 0) {
-							break;
-						}
-					}
-					if (thing.find('(') != std::string::npos) j++;
-					else if (thing[j] != '*' && !isdigit(thing[j])) j++;
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '.' || thing[j] == '*')) {
-						new_string += thing[j];
-						j++;
-					}
-				}
-				else {
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '*') != false) {
-							new_string += thing[j];
-						}
-						if (j <= 0) break;
-					}
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '*' || thing[j] == '.')) j++;
 				}
 			}
 			mult_loc = j + 1;
@@ -352,78 +347,56 @@ float Main::pemdas(std::string thing, int line)
 		) {
 			int j = thing.find('/', div_loc + stuck);
 			if (j < paren_loc_beg) {
+				std::string new_new = "";
 				for (; j > -1; j--) {
-					if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '/') != false) {
-						new_string += thing[j];
+					if ((isdigit(thing[j]) || thing[j] == '.') != false) {
+						new_new += thing[j];
 					}
 				}
 				j++;
 				while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '/' || thing[j] == '.')) j++;
+				new_string += '/';
+				std::reverse(new_new.begin(), new_new.end());
+				new_string += new_new;
 			}
 			else {
-				if (j >= paren_loc_beg - 1) {
+				while (
+					j >= 1 && thing[j - 1] != '-' && thing[j - 1] != '+' && thing[j - 1] != '*' &&
+					thing[j - 1] != '/' && thing[j - 1] != '^' && thing[j - 1] != ')'
+				) j--;
+				while (j > paren_loc_end - 1 && thing[j] != '(' && j < thing.size()) {
+					new_string += thing[j];
 					j++;
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '/') != true || j <= 0) {
-							break;
-						}
-					}
-					if (thing.find('(') != std::string::npos) j++;
-					else if (thing[j] != '/' && !isdigit(thing[j])) j++;
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '.' || thing[j] == '/')) {
-						new_string += thing[j];
-						j++;
-					}
-				}
-				else {
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '/') != false) {
-							new_string += thing[j];
-						}
-						if (j <= 0) break;
-					}
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '/' || thing[j] == '.')) j++;
 				}
 			}
 			div_loc = j + 1;
 		}
 		else if (
 			thing.find('+', plus_loc + stuck) != std::string::npos && (thing.find('+', plus_loc) + stuck < paren_loc_beg ||
-			thing.find('+', plus_loc) + stuck > paren_loc_end) && thing.find_first_of("1234567890", plus_loc) != std::string::npos
+			thing.find('+', plus_loc) + stuck > paren_loc_end)
 		) {
-			int j = thing.find('+', plus_loc + stuck);
+			int j = thing.find('+', plus_loc) + stuck;
 			if (j < paren_loc_beg) {
+				std::string new_new = "";
 				for (; j > -1; j--) {
-					if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '+') != false) {
-						new_string += thing[j];
+					if ((isdigit(thing[j]) || thing[j] == '.') != false) {
+						new_new += thing[j];
 					}
 				}
 				j++;
 				while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '+' || thing[j] == '.')) j++;
+				new_string += '+';
+				std::reverse(new_new.begin(), new_new.end());
+				new_string += new_new;
 			}
 			else {
-				if (j >= paren_loc_beg - 1) {
+				while (
+					j >= 1 && thing[j - 1] != '-' && thing[j - 1] != '+' && thing[j - 1] != '*' &&
+					thing[j - 1] != '/' && thing[j - 1] != '^' && thing[j - 1] != ')'
+				) j--;
+				while (j > paren_loc_end - 1 && thing[j] != '(' && j < thing.size()) {
+					new_string += thing[j];
 					j++;
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '+') != true || j <= 0) {
-							break;
-						}
-					}
-					if (thing.find('(') != std::string::npos) j++;
-					else if (thing[j] != '+' && !isdigit(thing[j])) j++;
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '.' || thing[j] == '+')) {
-						new_string += thing[j];
-						j++;
-					}
-				}
-				else {
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '+') != false) {
-							new_string += thing[j];
-						}
-						if (j <= 0) break;
-					}
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '+' || thing[j] == '.')) j++;
 				}
 			}
 			plus_loc = j + 1;
@@ -434,37 +407,26 @@ float Main::pemdas(std::string thing, int line)
 		) {
 			int j = thing.find('-', min_loc + stuck);
 			if (j < paren_loc_beg) {
+				std::string new_new = "";
 				for (; j > -1; j--) {
-					if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '-') != false) {
-						new_string += thing[j];
+					if ((isdigit(thing[j]) || thing[j] == '.') != false) {
+						new_new += thing[j];
 					}
 				}
 				j++;
 				while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '-' || thing[j] == '.')) j++;
+				new_string += '-';
+				std::reverse(new_new.begin(), new_new.end());
+				new_string += new_new;
 			}
 			else {
-				if (j >= paren_loc_beg - 1) {
+				while (
+					j >= 1 && thing[j - 1] != '-' && thing[j - 1] != '+' && thing[j - 1] != '*' &&
+					thing[j - 1] != '/' && thing[j - 1] != '^' && thing[j - 1] != ')'
+				) j--;
+				while (j > paren_loc_end - 1 && thing[j] != '(' && j < thing.size()) {
+					new_string += thing[j];
 					j++;
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '-') != true || j <= 0) {
-							break;
-						}
-					}
-					if (thing.find('(') != std::string::npos) j++;
-					else if (thing[j] != '-' && !isdigit(thing[j])) j++;
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '.' || thing[j] == '-')) {
-						new_string += thing[j];
-						j++;
-					}
-				}
-				else {
-					for (;; j--) {
-						if ((isdigit(thing[j]) || thing[j] == '.' || thing[j] == '-') != false) {
-							new_string += thing[j];
-						}
-						if (j <= 0) break;
-					}
-					while (j < thing.size() && (isdigit(thing[j]) || thing[j] == '-' || thing[j] == '.')) j++;
 				}
 			}
 			min_loc = j + 1;
@@ -1390,7 +1352,10 @@ void Main::translate(
 						thing += entire_file[i][a];
 					}
 					for (int a = 0; a < variables.size(); a++) {
-						while (thing.find(variables[a].c_str(), 0, variables[a].size()) != std::string::npos && variables[a] != "") {
+						while (
+							thing.find(variables[a].c_str(), 0, variables[a].size()) != std::string::npos && values[a] != "" &&
+							values[a].find(variables[a].c_str(), 0, variables[a].size()) == std::string::npos
+						) {
 							thing.replace(thing.find(variables[a].c_str()), variables[a].size(), values[a].c_str());
 						}
 					}
@@ -1588,7 +1553,10 @@ void Main::translate(
 								thing += entire_file[i][a];
 							}
 							for (int a = 0; a < variables.size(); a++) {
-								while (thing.find(variables[a].c_str(), 0, variables[a].size()) != std::string::npos && variables[a] != "") {
+								while (
+									thing.find(variables[a].c_str(), 0, variables[a].size()) != std::string::npos && values[a] != "" &&
+									values[a].find(variables[a].c_str(), 0, variables[a].size()) == std::string::npos
+									) {
 									thing.replace(thing.find(variables[a].c_str()), variables[a].size(), values[a].c_str());
 								}
 							}
@@ -1623,7 +1591,10 @@ void Main::translate(
 								thing += entire_file[i][a];
 							}
 							for (int a = 0; a < variables.size(); a++) {
-								while (thing.find(variables[a].c_str(), 0, variables[a].size()) != std::string::npos && variables[a] != "") {
+								while (
+									thing.find(variables[a].c_str(), 0, variables[a].size()) != std::string::npos && values[a] != "" &&
+									values[a].find(variables[a].c_str(), 0, variables[a].size()) == std::string::npos
+								) {
 									thing.replace(thing.find(variables[a].c_str()), variables[a].size(), values[a].c_str());
 								}
 							}
