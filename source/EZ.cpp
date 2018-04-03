@@ -6,20 +6,30 @@ int main(int argc, char** argv)
 		endp(1);
 	}
 	else {
-		Main x;
-		std::vector<std::string> varis;
-		std::vector<std::string> valis;
-		std::vector<std::vector<var> > baskets;
-		int count = 0;
-		std::ifstream fp(argv[1]);
-		if (fp.good()) {
-			x.translate(argv[1], varis, valis, baskets, count);
-			x.end_n_del(x.funcs, x.line_count);
-			endp(0, x.flush);
-		}
-		else {
-			std::cout << "Use an ez file that exists.\n";
-			endp(2);
+		for (int i = 1; argv[i] != 0; i++) {
+			Main x;
+			std::vector<std::string> varis;
+			std::vector<std::string> valis;
+			std::vector<std::vector<var> > baskets;
+			int count = 0;
+			std::ifstream fp(argv[i]);
+			if (fp.good()) {
+				if (argv[2] != 0) {
+					std::cout << ":::File " << i << ":::\n";
+				}
+				x.translate(argv[i], varis, valis, baskets, count);
+				x.end_n_del(x.funcs, x.line_count);
+				std::cout << "Press enter to continue...";
+				if (x.flush > 0) {
+					std::cin.clear();
+					std::cin.get();
+				}
+				std::cin.ignore();
+			}
+			else {
+				std::cout << "Use an ez file that exists.\n";
+				endp(2);
+			}
 		}
 	}
 }
