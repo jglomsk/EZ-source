@@ -1346,7 +1346,8 @@ void Main::translate(
 			else stop_here = entire_file[i].size();
 			while (entire_file[i][k] == ' ') k++;
 			while (entire_file[i][k] != '\n') {
-				if (entire_file[i].find_first_of("1234567890") != std::string::npos) {
+				if (entire_file[i].find_first_of("1234567890") != std::string::npos && 
+					entire_file[i].find_first_of("qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM") == std::string::npos) {
 					std::string thing = "";
 					for (int a = k; a < stop_here; a++) {
 						thing += entire_file[i][a];

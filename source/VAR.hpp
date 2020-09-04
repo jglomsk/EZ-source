@@ -58,11 +58,6 @@ namespace Math {
 	float calc(float x, char sign, float y);
 	int abs(int num);
 }
-// overloading len
-int len(const var& _thing)
-{
-	return 1;
-}
 // gets len of anything until first null character
 template <class T>
 int len(T *_thing)
